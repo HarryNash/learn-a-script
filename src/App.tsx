@@ -7,7 +7,9 @@ const TextBoxWithButton: React.FC = () => {
   const [script, setScript] = useState('');
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
+  const [attemptPlaceholder, setAttemptPlaceholder] = useState('');
   const [gif, setGif] = useState('');
+  const [scriptLineNumber, setScriptLineNumber] = useState(0);
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -23,11 +25,19 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      if (attempt === script.split('\n')[0]) {
+      setAttempt('');
+      if (attempt === script.split('\n')[scriptLineNumber]) {
         setGif(happyGif);
-        setAttempt('');
+        setAttemptPlaceholder('');
+        setScriptLineNumber(scriptLineNumber + 1);
+        if (scriptLineNumber >= script.split('\n').length - 1) {
+          setScriptLineNumber(0);
+          setShowNewTextBox(false);
+          setGif('');
+        }
       } else {
         setGif(sadGif);
+        setAttemptPlaceholder(script.split('\n')[scriptLineNumber]);
       }
     }
   };
@@ -41,24 +51,28 @@ const TextBoxWithButton: React.FC = () => {
         justifyContent="center"
         minHeight="100vh"
       >
-        <TextField
-          label="Enter Text"
-          variant="outlined"
-          value={script}
-          onChange={handleScriptChange}
-          fullWidth
-          multiline
-          rows={4}
-          sx={{ maxWidth: 500, mb: 2 }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleClick}
-          disabled={!script.trim()}
-        >
-          Submit
-        </Button>
+        {!showNewTextBox && (
+          <div>
+            <TextField
+              label="Enter Text"
+              variant="outlined"
+              value={script}
+              onChange={handleScriptChange}
+              fullWidth
+              multiline
+              rows={4}
+              sx={{ maxWidth: 500, mb: 2 }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleClick}
+              disabled={!script.trim()}
+            >
+              Submit Script
+            </Button>
+          </div>
+        )}
         {showNewTextBox && (
           <TextField
             label="Submitted Text"
@@ -66,6 +80,7 @@ const TextBoxWithButton: React.FC = () => {
             value={attempt}
             onChange={handleAttemptChange}
             onKeyPress={handleKeyPress}
+            placeholder={attemptPlaceholder}
             fullWidth
             sx={{ maxWidth: 500, mt: 2 }}
           />
