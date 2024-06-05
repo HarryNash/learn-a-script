@@ -23,7 +23,7 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      if (attempt === script) {
+      if (attempt === script.split('\n')[0]) {
         setGif(happyGif);
       } else {
         setGif(sadGif);
