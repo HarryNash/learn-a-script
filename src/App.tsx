@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Button, TextField, Box } from '@mui/material';
+import happyGif from './happy.gif';
+import sadGif from './crying.gif';
 
 const TextBoxWithButton: React.FC = () => {
   const [script, setScript] = useState('');
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
+  const [gif, setGif] = useState('');
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -16,6 +19,16 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleClick = () => {
     setShowNewTextBox(true);
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (attempt === script) {
+        setGif(happyGif);
+      } else {
+        setGif(sadGif);
+      }
+    }
   };
 
   return (
@@ -51,9 +64,15 @@ const TextBoxWithButton: React.FC = () => {
             variant="outlined"
             value={attempt}
             onChange={handleAttemptChange}
+            onKeyPress={handleKeyPress}
             fullWidth
             sx={{ maxWidth: 500, mt: 2 }}
           />
+        )}
+        {gif && (
+          <Box mt={2}>
+            <img src={gif} alt={gif === happyGif ? 'Happy' : 'Sad'} />
+          </Box>
         )}
       </Box>
       <a
