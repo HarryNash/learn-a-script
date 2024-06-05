@@ -25,6 +25,7 @@ const TextBoxWithButton: React.FC = () => {
     if (event.key === 'Enter') {
       if (attempt === script.split('\n')[0]) {
         setGif(happyGif);
+        setAttempt('');
       } else {
         setGif(sadGif);
       }
