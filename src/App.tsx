@@ -2,14 +2,20 @@ import React, { useState } from 'react';
 import { Button, TextField, Box } from '@mui/material';
 
 const TextBoxWithButton: React.FC = () => {
-  const [text, setText] = useState('');
+  const [script, setScript] = useState('');
+  const [showNewTextBox, setShowNewTextBox] = useState(false);
+  const [attempt, setAttempt] = useState('');
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setText(event.target.value);
+  const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setScript(event.target.value);
+  };
+
+  const handleAttemptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAttempt(event.target.value);
   };
 
   const handleClick = () => {
-    alert(`Text entered: ${text}`);
+    setShowNewTextBox(true);
   };
 
   return (
@@ -24,8 +30,8 @@ const TextBoxWithButton: React.FC = () => {
         <TextField
           label="Enter Text"
           variant="outlined"
-          value={text}
-          onChange={handleChange}
+          value={script}
+          onChange={handleScriptChange}
           fullWidth
           multiline
           rows={4}
@@ -35,10 +41,20 @@ const TextBoxWithButton: React.FC = () => {
           variant="contained"
           color="primary"
           onClick={handleClick}
-          disabled={!text.trim()}
+          disabled={!script.trim()}
         >
           Submit
         </Button>
+        {showNewTextBox && (
+          <TextField
+            label="Submitted Text"
+            variant="outlined"
+            value={attempt}
+            onChange={handleAttemptChange}
+            fullWidth
+            sx={{ maxWidth: 500, mt: 2 }}
+          />
+        )}
       </Box>
       <a
         className="App-link"
