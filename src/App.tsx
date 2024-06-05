@@ -80,6 +80,7 @@ const TextBoxWithButton: React.FC = () => {
             value={attempt}
             onChange={handleAttemptChange}
             onKeyPress={handleKeyPress}
+            error={attemptPlaceholder !== ''}
             placeholder={attemptPlaceholder}
             fullWidth
             sx={{ maxWidth: 500, mt: 2 }}
