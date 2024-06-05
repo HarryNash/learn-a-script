@@ -1,0 +1,3 @@
+npm run preparatory_prettier
+npm run preparatory_eslint
+npm run preparatory_test
