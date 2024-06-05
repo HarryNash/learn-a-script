@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Button, TextField, Box } from '@mui/material';
 
-function App() {
+const TextBoxWithButton: React.FC = () => {
+  const [text, setText] = useState('');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
+  };
+
+  const handleClick = () => {
+    alert(`Text entered: ${text}`);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+      >
+        <TextField
+          label="Enter Text"
+          variant="outlined"
+          value={text}
+          onChange={handleChange}
+          fullWidth
+          multiline
+          rows={4}
+          sx={{ maxWidth: 500, mb: 2 }}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleClick}
+          disabled={!text.trim()}
         >
-          Learn React
-        </a>
-      </header>
+          Submit
+        </Button>
+      </Box>
+      <a
+        className="App-link"
+        href="https://reactjs.org"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Learn React
+      </a>
     </div>
   );
-}
+};
 
-export default App;
+export default TextBoxWithButton;
