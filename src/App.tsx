@@ -78,8 +78,8 @@ const TextBoxWithButton: React.FC = () => {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        justifyContent="center"
         minHeight="100vh"
+        paddingY={5}
       >
         {!showNewTextBox && (
           <Box
