@@ -52,7 +52,7 @@ const TextBoxWithButton: React.FC = () => {
         minHeight="100vh"
       >
         {!showNewTextBox && (
-          <div>
+          <Box>
             <TextField
               label="Enter Text"
               variant="outlined"
@@ -71,7 +71,7 @@ const TextBoxWithButton: React.FC = () => {
             >
               Submit Script
             </Button>
-          </div>
+          </Box>
         )}
         {showNewTextBox && (
           <TextField
