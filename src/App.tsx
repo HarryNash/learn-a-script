@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Button, TextField, Box, Typography } from '@mui/material';
+import levenshtein from 'fast-levenshtein';
 import happyGif from './happy.gif';
-import * as Diff from 'diff';
 import sadGif from './crying.gif';
+import coolGif from './cool.gif';
+import * as Diff from 'diff';
 import './App.css'; // Import the CSS file
 
 const TextBoxWithButton: React.FC = () => {
@@ -10,7 +12,7 @@ const TextBoxWithButton: React.FC = () => {
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
   const [attemptPlaceholder, setAttemptPlaceholder] = useState('');
-  const [difference, setDifference] = useState(<div></div>);
+  const [difference, setDifference] = useState(<></>);
   const [gif, setGif] = useState('');
   const [scriptLineNumber, setScriptLineNumber] = useState(0);
   const [fade, setFade] = useState(false); // State to trigger fading effect
@@ -38,29 +40,33 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      const diffObj = Diff.diffWords(
-        attempt,
-        script.split('\n')[scriptLineNumber]
-      );
-
-      const diffFound = diffObj.map(getStyledPart);
-      setDifference(<Typography component="span">{diffFound}</Typography>);
-
-      if (attempt === script.split('\n')[scriptLineNumber]) {
+      const expected = script.split('\n')[scriptLineNumber];
+      const levenshteinDistance = levenshtein.get(attempt, expected);
+      const levenshteinCorrectness = 1 - levenshteinDistance / expected.length;
+      const diffObj = Diff.diffWords(attempt, expected);
+      const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
+      if (levenshteinCorrectness == 1) {
+        setDifference(<></>);
+        setGif(coolGif);
+        setAttemptPlaceholder('');
+        setScriptLineNumber(scriptLineNumber + 1);
+      } else if (levenshteinCorrectness >= 0.95) {
+        setDifference(diffFound);
         setGif(happyGif);
         setAttemptPlaceholder('');
         setScriptLineNumber(scriptLineNumber + 1);
-        if (scriptLineNumber >= script.split('\n').length - 1) {
-          setScriptLineNumber(0);
-          setShowNewTextBox(false);
-          setGif('');
-          setDifference(<div></div>);
-        }
       } else {
         setDifference(diffFound);
         setGif(sadGif);
         setAttemptPlaceholder(script.split('\n')[scriptLineNumber]);
       }
+
+      if (scriptLineNumber == script.split('\n').length - 1 && levenshteinCorrectness >= 0.95) {
+        setScriptLineNumber(0);
+        setShowNewTextBox(false);
+        setDifference(<div></div>);
+      }
+
       setAttempt('');
       setTimeout(() => {
         setFade(true);
@@ -74,22 +80,9 @@ const TextBoxWithButton: React.FC = () => {
 
   return (
     <div className="App">
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        minHeight="100vh"
-        paddingY={5}
-      >
+      <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" paddingY={5}>
         {!showNewTextBox && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            width="90%"
-            p={2}
-          >
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
             <TextField
               label="Script"
               variant="outlined"
@@ -113,7 +106,7 @@ const TextBoxWithButton: React.FC = () => {
         )}
         {showNewTextBox && (
           <TextField
-            label="Line"
+            label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
             variant="outlined"
             value={attempt}
             onChange={handleAttemptChange}
@@ -126,20 +119,11 @@ const TextBoxWithButton: React.FC = () => {
         {!attempt && <Box mt={2}> {difference} </Box>}
         {gif && (
           <Box mt={2}>
-            <img
-              src={gif}
-              alt={gif === happyGif ? 'Happy' : 'Sad'}
-              className={fade ? 'fade-out' : ''}
-            />
+            <img src={gif} alt={'reaction'} className={fade ? 'fade-out' : ''} />
           </Box>
         )}
       </Box>
-      <a
-        className="App-link"
-        href="https://reactjs.org"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
         Learn React
       </a>
     </div>

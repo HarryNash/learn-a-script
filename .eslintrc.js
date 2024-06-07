@@ -1,4 +1,7 @@
 module.exports = {
+  rules: {
+    'max-len': ['error', { code: 120 }],
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2021,
