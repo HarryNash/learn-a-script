@@ -11,7 +11,7 @@ const TextBoxWithButton: React.FC = () => {
   const [script, setScript] = useState('');
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
-  const [attemptPlaceholder, setAttemptPlaceholder] = useState('');
+  const [success, setSuccess] = useState(true);
   const [difference, setDifference] = useState(<></>);
   const [gif, setGif] = useState('');
   const [scriptLineNumber, setScriptLineNumber] = useState(0);
@@ -57,17 +57,17 @@ const TextBoxWithButton: React.FC = () => {
       if (levenshteinCorrectness == 1) {
         setDifference(<></>);
         setGif(coolGif);
-        setAttemptPlaceholder('');
+        setSuccess(true);
         setScriptLineNumber(scriptLineNumber + 1);
       } else if (levenshteinCorrectness >= 0.95) {
         setDifference(diffFound);
         setGif(happyGif);
-        setAttemptPlaceholder('');
+        setSuccess(true);
         setScriptLineNumber(scriptLineNumber + 1);
       } else {
         setDifference(diffFound);
         setGif(sadGif);
-        setAttemptPlaceholder(script.split('\n')[scriptLineNumber]);
+        setSuccess(false);
       }
 
       if (scriptLineNumber == script.split('\n').length - 1 && levenshteinCorrectness >= 0.95) {
@@ -75,11 +75,12 @@ const TextBoxWithButton: React.FC = () => {
         setShowNewTextBox(false);
         setDifference(<div></div>);
         setEndTime(Date.now());
-        setFirstPassAccuracy(
-          1 -
-            levenshtein.get((firstAttempts + attempt + '\n').replace('\n', ''), script.replace('\n', '')) /
-              script.length
-        );
+        const attemptsOneLine = (firstAttempts + attempt + '\n').replace(/\r?\n|\r/g, '');
+        const scriptOneLine = script.replace(/\r?\n|\r/g, '');
+        const diff = levenshtein.get(attemptsOneLine, scriptOneLine);
+        const ratio = diff / scriptOneLine.length;
+        const correctness = 1 - ratio;
+        setFirstPassAccuracy(correctness);
       }
 
       setAttempt('');
@@ -126,7 +127,7 @@ const TextBoxWithButton: React.FC = () => {
             value={attempt}
             onChange={handleAttemptChange}
             onKeyPress={handleKeyPress}
-            error={attemptPlaceholder !== ''}
+            error={!success}
             fullWidth
             sx={{ maxWidth: 500, mt: 2 }}
           />
