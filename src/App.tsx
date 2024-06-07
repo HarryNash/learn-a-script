@@ -18,6 +18,8 @@ const TextBoxWithButton: React.FC = () => {
   const [fade, setFade] = useState(false); // State to trigger fading effect
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
+  const [firstAttempts, setFirstAttempts] = useState('');
+  const [firstPassAccuracy, setFirstPassAccuracy] = useState(-1);
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -44,6 +46,9 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      if (script.split('\n').length != firstAttempts.split('\n').length) {
+        setFirstAttempts(firstAttempts + attempt + '\n');
+      }
       const expected = script.split('\n')[scriptLineNumber];
       const levenshteinDistance = levenshtein.get(attempt, expected);
       const levenshteinCorrectness = 1 - levenshteinDistance / expected.length;
@@ -70,6 +75,11 @@ const TextBoxWithButton: React.FC = () => {
         setShowNewTextBox(false);
         setDifference(<div></div>);
         setEndTime(Date.now());
+        setFirstPassAccuracy(
+          1 -
+            levenshtein.get((firstAttempts + attempt + '\n').replace('\n', ''), script.replace('\n', '')) /
+              script.length
+        );
       }
 
       setAttempt('');
@@ -122,7 +132,10 @@ const TextBoxWithButton: React.FC = () => {
           />
         )}
         {!attempt && <Box mt={2}> {difference} </Box>}
-        {endTime != 0 && <Typography>Total time: {(endTime - startTime) / 1000} seconds</Typography>}
+        {firstPassAccuracy != -1 && (
+          <Typography>Total first pass accuracy: {Math.round(100 * firstPassAccuracy)}%</Typography>
+        )}
+        {endTime != 0 && <Typography>Total time: {Math.round((endTime - startTime) / 1000)} seconds</Typography>}
         {gif && (
           <Box mt={2}>
             <img src={gif} alt={'reaction'} className={fade ? 'fade-out' : ''} />
