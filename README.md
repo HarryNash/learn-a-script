@@ -1,4 +1,5 @@
 # Done
+
 - I enter my script in a box
 - I click a button to commence
 - The script in a box disappears from sight
@@ -7,11 +8,11 @@
   - If I get it 95%> correct then display a pleased gif with a git diff showing my mistake, conceal the git diff whilst there is new text in the box
   - If I get it <95% correct then display a sad gif with a git diff showing my mistake, conceal the git diff whilst there is new text in the box
 - Add label for textfield eg "Line 3/10"
-
+- Display time worked
 
 # Things this should have
+
 - Add a gear to configure whether we care about punctuation, case and minimum percentage correctness
-- Display time worked
 - Display total accuracy of first attempts
 - Display prev line, faded
 - Deploy it

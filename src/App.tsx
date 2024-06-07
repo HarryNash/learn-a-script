@@ -16,6 +16,8 @@ const TextBoxWithButton: React.FC = () => {
   const [gif, setGif] = useState('');
   const [scriptLineNumber, setScriptLineNumber] = useState(0);
   const [fade, setFade] = useState(false); // State to trigger fading effect
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -27,6 +29,8 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleClick = () => {
     setShowNewTextBox(true);
+    setStartTime(Date.now());
+    setEndTime(0);
   };
 
   const getStyledPart = (part, index) => {
@@ -65,6 +69,7 @@ const TextBoxWithButton: React.FC = () => {
         setScriptLineNumber(0);
         setShowNewTextBox(false);
         setDifference(<div></div>);
+        setEndTime(Date.now());
       }
 
       setAttempt('');
@@ -117,6 +122,7 @@ const TextBoxWithButton: React.FC = () => {
           />
         )}
         {!attempt && <Box mt={2}> {difference} </Box>}
+        {endTime != 0 && <Typography>Total time: {(endTime - startTime) / 1000} seconds</Typography>}
         {gif && (
           <Box mt={2}>
             <img src={gif} alt={'reaction'} className={fade ? 'fade-out' : ''} />
