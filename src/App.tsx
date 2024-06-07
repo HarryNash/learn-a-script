@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, TextField, Box } from '@mui/material';
 import happyGif from './happy.gif';
 import sadGif from './crying.gif';
+import './App.css'; // Import the CSS file
 
 const TextBoxWithButton: React.FC = () => {
   const [script, setScript] = useState('');
@@ -10,6 +11,7 @@ const TextBoxWithButton: React.FC = () => {
   const [attemptPlaceholder, setAttemptPlaceholder] = useState('');
   const [gif, setGif] = useState('');
   const [scriptLineNumber, setScriptLineNumber] = useState(0);
+  const [fade, setFade] = useState(false); // State to trigger fading effect
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -39,6 +41,14 @@ const TextBoxWithButton: React.FC = () => {
         setGif(sadGif);
         setAttemptPlaceholder(script.split('\n')[scriptLineNumber]);
       }
+
+      setTimeout(() => {
+        setFade(true);
+        setTimeout(() => {
+          setFade(false);
+          setGif('');
+        }, 2000);
+      }, 1000);
     }
   };
 
@@ -96,7 +106,11 @@ const TextBoxWithButton: React.FC = () => {
         )}
         {gif && (
           <Box mt={2}>
-            <img src={gif} alt={gif === happyGif ? 'Happy' : 'Sad'} />
+            <img
+              src={gif}
+              alt={gif === happyGif ? 'Happy' : 'Sad'}
+              className={fade ? 'fade-out' : ''}
+            />
           </Box>
         )}
       </Box>
