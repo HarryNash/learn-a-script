@@ -52,24 +52,32 @@ const TextBoxWithButton: React.FC = () => {
         minHeight="100vh"
       >
         {!showNewTextBox && (
-          <Box>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            width="90%"
+            p={2}
+          >
             <TextField
-              label="Enter Text"
+              label="Script"
               variant="outlined"
               value={script}
               onChange={handleScriptChange}
               fullWidth
               multiline
-              rows={4}
-              sx={{ maxWidth: 500, mb: 2 }}
+              rows={10}
+              sx={{ marginX: 2 }} // Adding horizontal margin
             />
             <Button
               variant="contained"
               color="primary"
               onClick={handleClick}
               disabled={!script.trim()}
+              sx={{ marginTop: 2 }} // Adding some margin on top of the button
             >
-              Submit Script
+              Practice
             </Button>
           </Box>
         )}
