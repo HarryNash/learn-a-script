@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box } from '@mui/material';
+import { Button, TextField, Box, Typography } from '@mui/material';
 import happyGif from './happy.gif';
+import * as Diff from 'diff';
 import sadGif from './crying.gif';
 import './App.css'; // Import the CSS file
 
@@ -9,6 +10,7 @@ const TextBoxWithButton: React.FC = () => {
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
   const [attemptPlaceholder, setAttemptPlaceholder] = useState('');
+  const [difference, setDifference] = useState(<div></div>);
   const [gif, setGif] = useState('');
   const [scriptLineNumber, setScriptLineNumber] = useState(0);
   const [fade, setFade] = useState(false); // State to trigger fading effect
@@ -25,9 +27,25 @@ const TextBoxWithButton: React.FC = () => {
     setShowNewTextBox(true);
   };
 
+  const getStyledPart = (part, index) => {
+    const color = part.added ? 'green' : part.removed ? 'red' : 'black';
+    return (
+      <span key={index} style={{ color }}>
+        {part.value}
+      </span>
+    );
+  };
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      setAttempt('');
+      const diffObj = Diff.diffWords(
+        attempt,
+        script.split('\n')[scriptLineNumber]
+      );
+
+      const diffFound = diffObj.map(getStyledPart);
+      setDifference(<Typography component="span">{diffFound}</Typography>);
+
       if (attempt === script.split('\n')[scriptLineNumber]) {
         setGif(happyGif);
         setAttemptPlaceholder('');
@@ -36,12 +54,14 @@ const TextBoxWithButton: React.FC = () => {
           setScriptLineNumber(0);
           setShowNewTextBox(false);
           setGif('');
+          setDifference(<div></div>);
         }
       } else {
+        setDifference(diffFound);
         setGif(sadGif);
         setAttemptPlaceholder(script.split('\n')[scriptLineNumber]);
       }
-
+      setAttempt('');
       setTimeout(() => {
         setFade(true);
         setTimeout(() => {
@@ -93,17 +113,17 @@ const TextBoxWithButton: React.FC = () => {
         )}
         {showNewTextBox && (
           <TextField
-            label="Submitted Text"
+            label="Line"
             variant="outlined"
             value={attempt}
             onChange={handleAttemptChange}
             onKeyPress={handleKeyPress}
             error={attemptPlaceholder !== ''}
-            placeholder={attemptPlaceholder}
             fullWidth
             sx={{ maxWidth: 500, mt: 2 }}
           />
         )}
+        {!attempt && <Box mt={2}> {difference} </Box>}
         {gif && (
           <Box mt={2}>
             <img
