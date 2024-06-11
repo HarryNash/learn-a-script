@@ -80,6 +80,11 @@ const TextBoxWithButton: React.FC = () => {
         const diff = levenshtein.get(attemptsOneLine, scriptOneLine);
         const ratio = diff / scriptOneLine.length;
         const correctness = 1 - ratio;
+        console.log(attemptsOneLine);
+        console.log(scriptOneLine);
+        console.log(diff);
+        console.log(ratio);
+        console.log(correctness);
         setFirstPassAccuracy(correctness);
       }
 
