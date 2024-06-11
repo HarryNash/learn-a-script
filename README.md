@@ -11,13 +11,13 @@
 - Display time worked
 - Add nice icon
 - Add nice title
+- Stop 1password
 
 # Things this should have
 
 - Add link to my Linktree at the bottom
 - Stop showing first pass accuracy after you've restarted
 - Pop up the percentage correctness along with the gif
-- Stop 1password
 - Add button to load in a sample script (king icon) "A horse! A horse! My kingdom for a horse!" (this is convenient for testing it on a phone)
 - Highlight instead of change colour to make it clearer where the problems are
 - Display total accuracy correctly of first attempts

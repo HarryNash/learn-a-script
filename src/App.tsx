@@ -110,6 +110,12 @@ const TextBoxWithButton: React.FC = () => {
         {!showNewTextBox && (
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
             <TextField
+              inputProps={{
+                autocomplete: 'new-password',
+                form: {
+                  autocomplete: 'off',
+                },
+              }}
               label="Script"
               variant="outlined"
               value={script}
@@ -133,6 +139,12 @@ const TextBoxWithButton: React.FC = () => {
         {showNewTextBox && (
           <TextField
             label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
+            inputProps={{
+              autocomplete: 'new-password',
+              form: {
+                autocomplete: 'off',
+              },
+            }}
             variant="outlined"
             value={attempt}
             onChange={handleAttemptChange}
