@@ -55,12 +55,7 @@ const TextBoxWithButton: React.FC = () => {
       const diffObj = Diff.diffWords(attempt, expected);
       const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
       setDifference(diffFound);
-      if (levenshteinCorrectness == 1) {
-        setGif(happyGif);
-        setSuccess(true);
-        setScriptLineNumber(scriptLineNumber + 1);
-        new Audio('./ok.mp3').play();
-      } else if (levenshteinCorrectness >= 0.95) {
+      if (levenshteinCorrectness >= 0.95) {
         setGif(happyGif);
         setSuccess(true);
         setScriptLineNumber(scriptLineNumber + 1);
