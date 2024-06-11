@@ -11,11 +11,11 @@ const TextBoxWithButton: React.FC = () => {
   const [script, setScript] = useState('');
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
+  const [correctness, setCorrectness] = useState(-1);
   const [success, setSuccess] = useState(true);
   const [difference, setDifference] = useState(<></>);
   const [gif, setGif] = useState('');
   const [scriptLineNumber, setScriptLineNumber] = useState(0);
-  const [fade, setFade] = useState(false); // State to trigger fading effect
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
   const [firstAttempts, setFirstAttempts] = useState('');
@@ -33,6 +33,12 @@ const TextBoxWithButton: React.FC = () => {
     setShowNewTextBox(true);
     setStartTime(Date.now());
     setEndTime(0);
+  };
+
+  const handleLoadSample = () => {
+    setScript(
+      "Now Linus, I want you to take a good look at Charlie Brown's face.\nWould you please hold still a minute, Charlie Brown, I want Linus to study your face.\nNow, this is what you call a Failure Face, Linus."
+    );
   };
 
   const getStyledPart = (part, index) => {
@@ -55,6 +61,7 @@ const TextBoxWithButton: React.FC = () => {
       const diffObj = Diff.diffWords(attempt, expected);
       const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
       setDifference(diffFound);
+      setCorrectness(levenshteinCorrectness);
       if (levenshteinCorrectness >= 0.95) {
         setGif(happyGif);
         setSuccess(true);
@@ -85,13 +92,6 @@ const TextBoxWithButton: React.FC = () => {
       }
 
       setAttempt('');
-      setTimeout(() => {
-        setFade(true);
-        setTimeout(() => {
-          setFade(false);
-          setGif('');
-        }, 2000);
-      }, 1000);
     }
   };
 
@@ -104,6 +104,14 @@ const TextBoxWithButton: React.FC = () => {
         </Box>
         {!showNewTextBox && (
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleLoadSample}
+              sx={{ marginTop: 2 }} // Adding some margin on top of the button
+            >
+              Load Sample Script
+            </Button>
             <TextField
               inputProps={{
                 autocomplete: 'new-password',
@@ -150,13 +158,14 @@ const TextBoxWithButton: React.FC = () => {
           />
         )}
         {!attempt && <Box mt={2}> {difference} </Box>}
+        {!attempt && correctness != -1 && <Box mt={2}> {100 * correctness}% correct </Box>}
         {firstPassAccuracy != -1 && (
           <Typography>Total first pass accuracy: {Math.round(100 * firstPassAccuracy)}%</Typography>
         )}
         {endTime != 0 && <Typography>Total time: {Math.round((endTime - startTime) / 1000)} seconds</Typography>}
-        {gif && (
+        {!attempt && gif && (
           <Box mt={2}>
-            <img src={gif} alt={'reaction'} className={fade ? 'fade-out' : ''} />
+            <img src={gif} alt={'reaction'} />
           </Box>
         )}
       </Box>

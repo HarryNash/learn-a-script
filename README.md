@@ -14,18 +14,20 @@
 - Stop 1password
 - Deploy it
 - Add link to my Linktree at the bottom
+- Add sound
+- Highlight instead of change colour to make it clearer where the problems are
+- Make it so gif fades don't intertwine
+- Add button to load in a sample script (king icon) "A horse! A horse! My kingdom for a horse!" (this is convenient for testing it on a phone)
+- Pop up the percentage correctness along with the gif
 
 # Things this should have
 
 - Stop showing first pass accuracy after you've restarted
-- Pop up the percentage correctness along with the gif
-- Add button to load in a sample script (king icon) "A horse! A horse! My kingdom for a horse!" (this is convenient for testing it on a phone)
-- Highlight instead of change colour to make it clearer where the problems are
 - Display total accuracy correctly of first attempts
-- Add sound
-- Make it so gif fades don't intertwine
 - Add a gear to configure whether we care about sound, punctuation, case and minimum percentage correctness
 - Display hours, minutes, seconds instead of seconds
+- Link a proper URL on AWS
+- Add that real link to my LinkTree
 - Post on reddit
 
 # Extras
