@@ -4,7 +4,6 @@ import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
 import sadGif from './crying.gif';
-import coolGif from './cool.gif';
 import * as Diff from 'diff';
 import './App.css'; // Import the CSS file
 
@@ -55,20 +54,21 @@ const TextBoxWithButton: React.FC = () => {
       const levenshteinCorrectness = 1 - levenshteinDistance / expected.length;
       const diffObj = Diff.diffWords(attempt, expected);
       const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
+      setDifference(diffFound);
       if (levenshteinCorrectness == 1) {
-        setDifference(<></>);
-        setGif(coolGif);
-        setSuccess(true);
-        setScriptLineNumber(scriptLineNumber + 1);
-      } else if (levenshteinCorrectness >= 0.95) {
-        setDifference(diffFound);
         setGif(happyGif);
         setSuccess(true);
         setScriptLineNumber(scriptLineNumber + 1);
+        new Audio('./ok.mp3').play();
+      } else if (levenshteinCorrectness >= 0.95) {
+        setGif(happyGif);
+        setSuccess(true);
+        setScriptLineNumber(scriptLineNumber + 1);
+        new Audio('./ok.mp3').play();
       } else {
-        setDifference(diffFound);
         setGif(sadGif);
         setSuccess(false);
+        new Audio('./fail.mp3').play();
       }
 
       if (scriptLineNumber == script.split('\n').length - 1 && levenshteinCorrectness >= 0.95) {
