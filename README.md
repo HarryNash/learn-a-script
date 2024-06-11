@@ -12,10 +12,11 @@
 - Add nice icon
 - Add nice title
 - Stop 1password
+- Deploy it
+- Add link to my Linktree at the bottom
 
 # Things this should have
 
-- Add link to my Linktree at the bottom
 - Stop showing first pass accuracy after you've restarted
 - Pop up the percentage correctness along with the gif
 - Add button to load in a sample script (king icon) "A horse! A horse! My kingdom for a horse!" (this is convenient for testing it on a phone)
@@ -25,7 +26,6 @@
 - Make it so gif fades don't intertwine
 - Add a gear to configure whether we care about sound, punctuation, case and minimum percentage correctness
 - Display hours, minutes, seconds instead of seconds
-- Deploy it
 - Post on reddit
 
 # Extras

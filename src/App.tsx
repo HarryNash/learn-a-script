@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, Typography } from '@mui/material';
+import { Button, TextField, Box, Typography, Link } from '@mui/material';
 import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
@@ -37,9 +37,9 @@ const TextBoxWithButton: React.FC = () => {
   };
 
   const getStyledPart = (part, index) => {
-    const color = part.added ? 'green' : part.removed ? 'red' : 'black';
+    const backgroundColor = part.added ? 'lightgreen' : part.removed ? 'lightcoral' : 'transparent';
     return (
-      <span key={index} style={{ color }}>
+      <span key={index} style={{ backgroundColor }}>
         {part.value}
       </span>
     );
@@ -165,9 +165,9 @@ const TextBoxWithButton: React.FC = () => {
           </Box>
         )}
       </Box>
-      <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-        Learn React
-      </a>
+      <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
+        Built by Harry Nash 🏗️
+      </Link>
     </div>
   );
 };
