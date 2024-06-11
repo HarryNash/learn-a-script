@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, TextField, Box, Typography } from '@mui/material';
 import levenshtein from 'fast-levenshtein';
+import Logo from './logo.png';
 import happyGif from './happy.gif';
 import sadGif from './crying.gif';
 import coolGif from './cool.gif';
@@ -102,6 +103,10 @@ const TextBoxWithButton: React.FC = () => {
   return (
     <div className="App">
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" paddingY={5}>
+        <Box display="flex" alignItems="center">
+          <img src={Logo} alt="Logo" style={{ marginRight: '10px', height: '100px' }} />
+          <Typography variant="h4">Learn a Script</Typography>
+        </Box>
         {!showNewTextBox && (
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
             <TextField
