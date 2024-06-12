@@ -25,10 +25,10 @@
 - Configure whether we care about sound, punctuation, case and minimum percentage correctness
 - Add a finish button so you can see the correctness of your last line
 - Fix first pass accuracy
+- Display hours, minutes, seconds instead of seconds
 
 # Things this should have
 
-- Display hours, minutes, seconds instead of seconds
 - Link a proper URL on AWS
 - Add that real link to my LinkTree
 - Post on reddit

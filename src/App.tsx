@@ -7,6 +7,30 @@ import sadGif from './crying.gif';
 import * as Diff from 'diff';
 import './App.css'; // Import the CSS file
 
+function formatDuration(ms) {
+  let seconds = Math.floor(ms / 1000);
+  let minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  seconds = seconds % 60;
+  minutes = minutes % 60;
+
+  // Initialize parts as an array
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(hours + ' hour' + (hours > 1 ? 's' : ''));
+  }
+  if (minutes > 0) {
+    parts.push(minutes + ' minute' + (minutes > 1 ? 's' : ''));
+  }
+  if (seconds > 0 || parts.length === 0) {
+    parts.push(seconds + ' second' + (seconds !== 1 ? 's' : ''));
+  }
+
+  return parts.join(', ');
+}
+
 const TextBoxWithButton: React.FC = () => {
   const [script, setScript] = useState('');
   const [showNewTextBox, setShowNewTextBox] = useState(false);
@@ -238,7 +262,7 @@ const TextBoxWithButton: React.FC = () => {
           </Box>
         )}
         {firstPassAccuracy != -1 && <Typography>Total first pass accuracy: {firstPassAccuracy}%</Typography>}
-        {endTime != -1 && <Typography>Total time: {Math.round((endTime - startTime) / 1000)} seconds</Typography>}
+        {endTime != -1 && <Typography>Total time: {formatDuration(Math.round(endTime - startTime))}</Typography>}
         {!attempt && gif && (
           <Box mt={2}>
             <img src={gif} alt={'reaction'} />
