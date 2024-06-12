@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, Typography, Link, Switch, Slider } from '@mui/material';
+import { Button, TextField, Box, Typography, Link, Switch, Slider, createTheme, ThemeProvider } from '@mui/material';
 import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
@@ -31,6 +31,10 @@ function formatDuration(ms) {
   return parts.join(', ');
 }
 
+const newlines = /\r?\n|\r/g;
+
+const punctuation = /[.,/#!$%^&*;:{}=\-_`~()]/g;
+
 const TextBoxWithButton: React.FC = () => {
   const [script, setScript] = useState('');
   const [showNewTextBox, setShowNewTextBox] = useState(false);
@@ -48,6 +52,15 @@ const TextBoxWithButton: React.FC = () => {
   const [checkCase, setCheckCase] = useState(true);
   const [checkPunctuation, setCheckPunctuation] = useState(true);
   const [minimumCorrectness, setMinimumCorrectness] = useState(95);
+
+  // Create a green theme
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#64d989', // Green
+      },
+    },
+  });
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -94,19 +107,21 @@ const TextBoxWithButton: React.FC = () => {
     );
   };
 
-  const calculateLevenshteinCorrectness = (attempt, expected, checkCase, checkPunctuation) => {
-    const newlines = /\r?\n|\r/g;
-    attempt = attempt.replace(newlines, '');
-    expected = expected.replace(newlines, '');
+  const applyLineSettings = (line, checkCase, checkPunctuation) => {
+    line = line.replace(newlines, '');
     if (!checkCase) {
-      attempt = attempt.toLowerCase();
-      expected = expected.toLowerCase();
+      line = line.toLowerCase();
     }
-    const punctuation = /[.,/#!$%^&*;:{}=\-_`~()]/g;
+
     if (!checkPunctuation) {
-      attempt = attempt.replace(punctuation, '');
-      expected = attempt.replace(punctuation, '');
+      line = line.replace(punctuation, '');
     }
+    return line;
+  };
+
+  const calculateLevenshteinCorrectness = (attempt, expected, checkCase, checkPunctuation) => {
+    attempt = applyLineSettings(attempt, checkCase, checkPunctuation);
+    expected = applyLineSettings(expected, checkCase, checkPunctuation);
     const levenshteinDistance = levenshtein.get(attempt, expected);
     const levenshteinRatio = levenshteinDistance / Math.max(attempt.length, expected.length);
     const percentageCorrectness = 100 * (1 - levenshteinRatio);
@@ -130,7 +145,10 @@ const TextBoxWithButton: React.FC = () => {
       }
       const expected = script.split('\n')[scriptLineNumber];
 
-      const diffObj = Diff.diffWords(attempt, expected);
+      const diffObj = Diff.diffWords(
+        applyLineSettings(attempt, checkCase, checkPunctuation),
+        applyLineSettings(expected, checkCase, checkPunctuation)
+      );
       const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
       setDifference(diffFound);
       const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected, checkCase, checkPunctuation);
@@ -163,116 +181,124 @@ const TextBoxWithButton: React.FC = () => {
 
   return (
     <div className="App">
-      <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" paddingY={5}>
-        <Box display="flex" alignItems="center">
-          <img src={Logo} alt="Logo" style={{ marginRight: '10px', height: '100px' }} />
-          <Typography variant="h4">Learn a Script</Typography>
-        </Box>
-        {!showNewTextBox && (
-          <>
-            <Box display="flex" alignItems="center">
-              <Slider
-                aria-label="Always visible"
-                valueLabelDisplay="on"
-                value={typeof minimumCorrectness === 'number' ? minimumCorrectness : 0}
-                onChange={handleSliderChange}
-                aria-labelledby="input-slider"
-              />
-              <Typography>Minimum % Correctness to Continue</Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-              <Switch checked={enableSound} onChange={handleEnableSound} />
-              <Typography>Enable Sound</Typography>
-            </Box>
+      <ThemeProvider theme={theme}>
+        <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" paddingY={5}>
+          <Box display="flex" alignItems="center">
+            <img src={Logo} alt="Logo" style={{ marginRight: '10px', height: '100px' }} />
+            <Typography variant="h3" style={{ fontFamily: 'Papyrus' }}>
+              Learn a Script
+            </Typography>
+          </Box>
+          {!showNewTextBox && (
+            <>
+              <Box display="flex" alignItems="center" width="30%">
+                <Slider
+                  aria-label="Always visible"
+                  valueLabelDisplay="on"
+                  value={typeof minimumCorrectness === 'number' ? minimumCorrectness : 0}
+                  onChange={handleSliderChange}
+                  aria-labelledby="input-slider"
+                />
+                <Typography>Correctness to Pass</Typography>
+              </Box>
+              <Box display="flex" alignItems="center">
+                <Switch checked={enableSound} onChange={handleEnableSound} />
+                <Typography>Enable Sound</Typography>
+              </Box>
 
-            <Box display="flex" alignItems="center">
-              <Switch checked={checkCase} onChange={handleCheckCase} />
-              <Typography>Check Upper and Lower Case</Typography>
-            </Box>
+              <Box display="flex" alignItems="center">
+                <Switch checked={checkCase} onChange={handleCheckCase} />
+                <Typography>Check Upper and Lower Case</Typography>
+              </Box>
 
-            <Box display="flex" alignItems="center">
-              <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
-              <Typography>Check Punctuation</Typography>
-            </Box>
+              <Box display="flex" alignItems="center">
+                <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
+                <Typography>Check Punctuation</Typography>
+              </Box>
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleLoadSample}
-              sx={{ marginTop: 2 }} // Adding some margin on top of the button
-            >
-              Load Sample Script
-            </Button>
-            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
-              <TextField
-                inputProps={{
-                  autocomplete: 'new-password',
-                  form: {
-                    autocomplete: 'off',
-                  },
-                }}
-                label="Script"
-                variant="outlined"
-                value={script}
-                onChange={handleScriptChange}
-                fullWidth
-                multiline
-                rows={10}
-                sx={{ marginX: 2 }} // Adding horizontal margin
-              />
               <Button
                 variant="contained"
-                color="primary"
-                onClick={handleClick}
-                disabled={!script.trim()}
+                onClick={handleLoadSample}
                 sx={{ marginTop: 2 }} // Adding some margin on top of the button
               >
-                Practice
+                Load Sample Script
               </Button>
+              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
+                <TextField
+                  inputProps={{
+                    autocomplete: 'new-password',
+                    form: {
+                      autocomplete: 'off',
+                    },
+                  }}
+                  label="Script"
+                  variant="outlined"
+                  value={script}
+                  onChange={handleScriptChange}
+                  fullWidth
+                  multiline
+                  rows={10}
+                  sx={{ marginX: 2 }} // Adding horizontal margin
+                />
+                <Button
+                  variant="contained"
+                  onClick={handleClick}
+                  disabled={!script.trim()}
+                  sx={{ marginTop: 2 }} // Adding some margin on top of the button
+                >
+                  Practice
+                </Button>
+              </Box>
+            </>
+          )}
+          {isFinished() && (
+            <Button variant="contained" onClick={handleFinishPress}>
+              Finish
+            </Button>
+          )}
+          {!isFinished() && showNewTextBox && (
+            <TextField
+              label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
+              inputProps={{
+                autocomplete: 'new-password',
+                form: {
+                  autocomplete: 'off',
+                },
+              }}
+              variant="outlined"
+              value={attempt}
+              onChange={handleAttemptChange}
+              onKeyPress={handleKeyPress}
+              error={!success}
+              fullWidth
+              sx={{ maxWidth: 500, mt: 2 }}
+            />
+          )}
+          {!attempt && <Box mt={2}> {difference} </Box>}
+          {!attempt && showNewTextBox && correctness != -1 && (
+            <Box mt={2}>
+              <Typography style={{ color: success ? 'green' : 'red' }}>Correctness: {correctness}%</Typography>
+              {!isFinished() && (
+                <Typography style={{ color: success ? 'green' : 'red' }}>
+                  Please try {success ? 'the next line' : 'that line again'}.
+                </Typography>
+              )}
             </Box>
-          </>
-        )}
-        {isFinished() && (
-          <Button color="primary" variant="contained" onClick={handleFinishPress}>
-            Finish
-          </Button>
-        )}
-        {!isFinished() && showNewTextBox && (
-          <TextField
-            label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
-            inputProps={{
-              autocomplete: 'new-password',
-              form: {
-                autocomplete: 'off',
-              },
-            }}
-            variant="outlined"
-            value={attempt}
-            onChange={handleAttemptChange}
-            onKeyPress={handleKeyPress}
-            error={!success}
-            fullWidth
-            sx={{ maxWidth: 500, mt: 2 }}
-          />
-        )}
-        {!attempt && <Box mt={2}> {difference} </Box>}
-        {!attempt && showNewTextBox && correctness != -1 && (
-          <Box mt={2}>
-            <Typography>Correctness: {correctness}%</Typography>
-            {!isFinished() && <Typography>Please {success ? 'continue' : 'try again'}.</Typography>}
-          </Box>
-        )}
-        {firstPassAccuracy != -1 && <Typography>Total First Pass Correctness: {firstPassAccuracy}%</Typography>}
-        {endTime != -1 && <Typography>Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>}
-        {!attempt && gif && (
-          <Box mt={2}>
-            <img src={gif} alt={'reaction'} />
-          </Box>
-        )}
-      </Box>
-      <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
-        Built by Harry Nash 🏗️
-      </Link>
+          )}
+          {firstPassAccuracy != -1 && <Typography>Total First Pass Correctness: {firstPassAccuracy}%</Typography>}
+          {endTime != -1 && (
+            <Typography>Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>
+          )}
+          {!attempt && gif && (
+            <Box mt={2}>
+              <img src={gif} alt={'reaction'} />
+            </Box>
+          )}
+        </Box>
+        <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
+          Built by Harry Nash 🏗️
+        </Link>
+      </ThemeProvider>
     </div>
   );
 };
