@@ -21,10 +21,10 @@
 - Pop up the percentage correctness along with the gif
 - Display total accuracy correctly of first attempts
 - Say try again if you're beneath the threshold
+- Stop showing first pass accuracy after you've restarted
 
 # Things this should have
 
-- Stop showing first pass accuracy after you've restarted
 - Add a gear to configure whether we care about sound, punctuation, case and minimum percentage correctness
 - Display hours, minutes, seconds instead of seconds
 - Link a proper URL on AWS

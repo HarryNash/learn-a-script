@@ -35,6 +35,9 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleClick = () => {
     setShowNewTextBox(true);
+    setFirstPassAccuracy(-1);
+    setCorrectness(-1);
+    setGif('');
     setStartTime(Date.now());
     setEndTime(0);
   };
@@ -208,7 +211,7 @@ const TextBoxWithButton: React.FC = () => {
           />
         )}
         {!attempt && <Box mt={2}> {difference} </Box>}
-        {!attempt && correctness != -1 && (
+        {!attempt && showNewTextBox && correctness != -1 && (
           <Box mt={2}>
             That was {correctness}% correct, please {success ? 'continue' : 'try again'}.
           </Box>
