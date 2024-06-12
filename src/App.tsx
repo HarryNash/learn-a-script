@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, Typography, Link } from '@mui/material';
+import { Button, TextField, Box, Typography, Link, FormGroup, FormControlLabel, Switch, Slider } from '@mui/material';
 import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
@@ -20,6 +20,10 @@ const TextBoxWithButton: React.FC = () => {
   const [endTime, setEndTime] = useState(0);
   const [firstAttempts, setFirstAttempts] = useState('');
   const [firstPassAccuracy, setFirstPassAccuracy] = useState(-1);
+  const [enableSound, setEnableSound] = useState(true);
+  const [checkCase, setCheckCase] = useState(true);
+  const [checkPunctuation, setCheckPunctuation] = useState(true);
+  const [minimumCorrectness, setMinimumCorrectness] = useState(95);
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -41,6 +45,18 @@ const TextBoxWithButton: React.FC = () => {
     );
   };
 
+  const handleEnableSound = () => {
+    setEnableSound(!enableSound);
+  };
+
+  const handleCheckCase = () => {
+    setCheckCase(!checkCase);
+  };
+
+  const handleCheckPunctuation = () => {
+    setCheckPunctuation(!checkPunctuation);
+  };
+
   const getStyledPart = (part, index) => {
     const backgroundColor = part.added ? 'lightgreen' : part.removed ? 'lightcoral' : 'transparent';
     return (
@@ -53,7 +69,8 @@ const TextBoxWithButton: React.FC = () => {
   const calculateLevenshteinCorrectness = (attempt, expected) => {
     const levenshteinDistance = levenshtein.get(attempt, expected);
     const levenshteinRatio = levenshteinDistance / Math.max(attempt.length, expected.length);
-    return 1 - levenshteinRatio;
+    const percentageCorrectness = 100 * (1 - levenshteinRatio);
+    return Math.round(percentageCorrectness);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -68,18 +85,22 @@ const TextBoxWithButton: React.FC = () => {
       setDifference(diffFound);
       const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected);
       setCorrectness(levenshteinCorrectness);
-      if (levenshteinCorrectness >= 0.95) {
+      if (levenshteinCorrectness >= minimumCorrectness) {
         setGif(happyGif);
         setSuccess(true);
         setScriptLineNumber(scriptLineNumber + 1);
-        new Audio('./ok.mp3').play();
+        if (enableSound) {
+          new Audio('./ok.mp3').play();
+        }
       } else {
         setGif(sadGif);
         setSuccess(false);
-        new Audio('./fail.mp3').play();
+        if (enableSound) {
+          new Audio('./fail.mp3').play();
+        }
       }
 
-      if (scriptLineNumber == script.split('\n').length - 1 && levenshteinCorrectness >= 0.95) {
+      if (scriptLineNumber == script.split('\n').length - 1 && levenshteinCorrectness >= minimumCorrectness) {
         setScriptLineNumber(0);
         setShowNewTextBox(false);
         setDifference(<div></div>);
@@ -94,6 +115,10 @@ const TextBoxWithButton: React.FC = () => {
     }
   };
 
+  const handleSliderChange = (event: Event, newValue: number | number[]) => {
+    setMinimumCorrectness(newValue as number);
+  };
+
   return (
     <div className="App">
       <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" paddingY={5}>
@@ -103,6 +128,30 @@ const TextBoxWithButton: React.FC = () => {
         </Box>
         {!showNewTextBox && (
           <>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Slider
+                    aria-label="Always visible"
+                    valueLabelDisplay="on"
+                    value={typeof minimumCorrectness === 'number' ? minimumCorrectness : 0}
+                    onChange={handleSliderChange}
+                    aria-labelledby="input-slider"
+                  />
+                }
+                label="Minimum % Correctness to Proceed"
+              />
+              <FormControlLabel control={<Switch defaultChecked onChange={handleEnableSound} />} label="Enable Sound" />
+              <FormControlLabel
+                control={<Switch defaultChecked onChange={handleCheckCase} />}
+                label="Check Upper and Lower Case"
+              />
+              <FormControlLabel
+                control={<Switch defaultChecked onChange={handleCheckPunctuation} />}
+                label="Check Punctuation"
+              />
+              <Box display="flex" alignItems="center"></Box>
+            </FormGroup>
             <Button
               variant="contained"
               color="primary"
@@ -159,10 +208,8 @@ const TextBoxWithButton: React.FC = () => {
           />
         )}
         {!attempt && <Box mt={2}> {difference} </Box>}
-        {!attempt && correctness != -1 && <Box mt={2}> {100 * correctness}% correct </Box>}
-        {firstPassAccuracy != -1 && (
-          <Typography>Total first pass accuracy: {Math.round(100 * firstPassAccuracy)}%</Typography>
-        )}
+        {!attempt && correctness != -1 && <Box mt={2}> {correctness}% correct </Box>}
+        {firstPassAccuracy != -1 && <Typography>Total first pass accuracy: {firstPassAccuracy}%</Typography>}
         {endTime != 0 && <Typography>Total time: {Math.round((endTime - startTime) / 1000)} seconds</Typography>}
         {!attempt && gif && (
           <Box mt={2}>
