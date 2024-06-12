@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, Typography, Link, FormGroup, FormControlLabel, Switch, Slider } from '@mui/material';
+import { Button, TextField, Box, Typography, Link, Switch, Slider } from '@mui/material';
 import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
@@ -69,7 +69,19 @@ const TextBoxWithButton: React.FC = () => {
     );
   };
 
-  const calculateLevenshteinCorrectness = (attempt, expected) => {
+  const calculateLevenshteinCorrectness = (attempt, expected, checkCase, checkPunctuation) => {
+    const newlines = /\r?\n|\r/g;
+    attempt = attempt.replace(newlines, '');
+    expected = expected.replace(newlines, '');
+    if (!checkCase) {
+      attempt = attempt.toLowerCase();
+      expected = expected.toLowerCase();
+    }
+    const punctuation = /[.,/#!$%^&*;:{}=\-_`~()]/g;
+    if (!checkPunctuation) {
+      attempt = attempt.replace(punctuation, '');
+      expected = attempt.replace(punctuation, '');
+    }
     const levenshteinDistance = levenshtein.get(attempt, expected);
     const levenshteinRatio = levenshteinDistance / Math.max(attempt.length, expected.length);
     const percentageCorrectness = 100 * (1 - levenshteinRatio);
@@ -86,7 +98,7 @@ const TextBoxWithButton: React.FC = () => {
       const diffObj = Diff.diffWords(attempt, expected);
       const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
       setDifference(diffFound);
-      const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected);
+      const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected, checkCase, checkPunctuation);
       setCorrectness(levenshteinCorrectness);
       if (levenshteinCorrectness >= minimumCorrectness) {
         setGif(happyGif);
@@ -108,9 +120,7 @@ const TextBoxWithButton: React.FC = () => {
         setShowNewTextBox(false);
         setDifference(<div></div>);
         setEndTime(Date.now());
-        const attemptsOneLine = (firstAttempts + attempt + '\n').replace(/\r?\n|\r/g, '');
-        const scriptOneLine = script.replace(/\r?\n|\r/g, '');
-        const correctness = calculateLevenshteinCorrectness(attemptsOneLine, scriptOneLine);
+        const correctness = calculateLevenshteinCorrectness(firstAttempts, script, checkCase, checkPunctuation);
         setFirstPassAccuracy(correctness);
       }
 
@@ -131,30 +141,31 @@ const TextBoxWithButton: React.FC = () => {
         </Box>
         {!showNewTextBox && (
           <>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Slider
-                    aria-label="Always visible"
-                    valueLabelDisplay="on"
-                    value={typeof minimumCorrectness === 'number' ? minimumCorrectness : 0}
-                    onChange={handleSliderChange}
-                    aria-labelledby="input-slider"
-                  />
-                }
-                label="Minimum % Correctness to Proceed"
+            <Box display="flex" alignItems="center">
+              <Slider
+                aria-label="Always visible"
+                valueLabelDisplay="on"
+                value={typeof minimumCorrectness === 'number' ? minimumCorrectness : 0}
+                onChange={handleSliderChange}
+                aria-labelledby="input-slider"
               />
-              <FormControlLabel control={<Switch defaultChecked onChange={handleEnableSound} />} label="Enable Sound" />
-              <FormControlLabel
-                control={<Switch defaultChecked onChange={handleCheckCase} />}
-                label="Check Upper and Lower Case"
-              />
-              <FormControlLabel
-                control={<Switch defaultChecked onChange={handleCheckPunctuation} />}
-                label="Check Punctuation"
-              />
-              <Box display="flex" alignItems="center"></Box>
-            </FormGroup>
+              <Typography>Minimum % Correctness to Proceed</Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+              <Switch checked={enableSound} onChange={handleEnableSound} />
+              <Typography>Enable Sound</Typography>
+            </Box>
+
+            <Box display="flex" alignItems="center">
+              <Switch checked={checkCase} onChange={handleCheckCase} />
+              <Typography>Check Upper and Lower Case</Typography>
+            </Box>
+
+            <Box display="flex" alignItems="center">
+              <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
+              <Typography>Check Punctuation</Typography>
+            </Box>
+
             <Button
               variant="contained"
               color="primary"

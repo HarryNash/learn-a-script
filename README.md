@@ -22,10 +22,11 @@
 - Display total accuracy correctly of first attempts
 - Say try again if you're beneath the threshold
 - Stop showing first pass accuracy after you've restarted
+- Configure whether we care about sound, punctuation, case and minimum percentage correctness
 
 # Things this should have
 
-- Add a gear to configure whether we care about sound, punctuation, case and minimum percentage correctness
+- Add a finish button so you can see the correctness of your last line
 - Display hours, minutes, seconds instead of seconds
 - Link a proper URL on AWS
 - Add that real link to my LinkTree
