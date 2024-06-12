@@ -88,6 +88,16 @@ const TextBoxWithButton: React.FC = () => {
     return Math.round(percentageCorrectness);
   };
 
+  const handleFinishPress = () => {
+    setScriptLineNumber(0);
+    setShowNewTextBox(false);
+    setDifference(<div></div>);
+    setEndTime(Date.now());
+    setGif('');
+    const correctness = calculateLevenshteinCorrectness(firstAttempts, script, checkCase, checkPunctuation);
+    setFirstPassAccuracy(correctness);
+  };
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if (script.split('\n').length != firstAttempts.split('\n').length) {
@@ -114,18 +124,12 @@ const TextBoxWithButton: React.FC = () => {
           new Audio('./fail.mp3').play();
         }
       }
-
-      if (scriptLineNumber == script.split('\n').length - 1 && levenshteinCorrectness >= minimumCorrectness) {
-        setScriptLineNumber(0);
-        setShowNewTextBox(false);
-        setDifference(<div></div>);
-        setEndTime(Date.now());
-        const correctness = calculateLevenshteinCorrectness(firstAttempts, script, checkCase, checkPunctuation);
-        setFirstPassAccuracy(correctness);
-      }
-
       setAttempt('');
     }
+  };
+
+  const isFinished = () => {
+    return scriptLineNumber == script.split('\n').length;
   };
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
@@ -203,7 +207,12 @@ const TextBoxWithButton: React.FC = () => {
             </Box>
           </>
         )}
-        {showNewTextBox && (
+        {isFinished() && (
+          <Button color="primary" variant="contained" onClick={handleFinishPress}>
+            Finish
+          </Button>
+        )}
+        {!isFinished() && showNewTextBox && (
           <TextField
             label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
             inputProps={{
