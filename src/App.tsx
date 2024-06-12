@@ -40,6 +40,7 @@ const TextBoxWithButton: React.FC = () => {
     setGif('');
     setStartTime(Date.now());
     setEndTime(-1);
+    setFirstAttempts('');
   };
 
   const handleLoadSample = () => {
@@ -100,7 +101,7 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      if (script.split('\n').length != firstAttempts.split('\n').length) {
+      if (firstAttempts.split('\n').length - 1 == scriptLineNumber) {
         setFirstAttempts(firstAttempts + attempt + '\n');
       }
       const expected = script.split('\n')[scriptLineNumber];

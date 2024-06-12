@@ -24,10 +24,10 @@
 - Stop showing first pass accuracy after you've restarted
 - Configure whether we care about sound, punctuation, case and minimum percentage correctness
 - Add a finish button so you can see the correctness of your last line
+- Fix first pass accuracy
 
 # Things this should have
 
-- Fix first pass accuracy
 - Display hours, minutes, seconds instead of seconds
 - Link a proper URL on AWS
 - Add that real link to my LinkTree
