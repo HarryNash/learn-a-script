@@ -103,7 +103,7 @@ const TextBoxWithButton: React.FC = () => {
           <Typography variant="h4">Learn a Script</Typography>
         </Box>
         {!showNewTextBox && (
-          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
+          <>
             <Button
               variant="contained"
               color="primary"
@@ -112,32 +112,34 @@ const TextBoxWithButton: React.FC = () => {
             >
               Load Sample Script
             </Button>
-            <TextField
-              inputProps={{
-                autocomplete: 'new-password',
-                form: {
-                  autocomplete: 'off',
-                },
-              }}
-              label="Script"
-              variant="outlined"
-              value={script}
-              onChange={handleScriptChange}
-              fullWidth
-              multiline
-              rows={10}
-              sx={{ marginX: 2 }} // Adding horizontal margin
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleClick}
-              disabled={!script.trim()}
-              sx={{ marginTop: 2 }} // Adding some margin on top of the button
-            >
-              Practice
-            </Button>
-          </Box>
+            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
+              <TextField
+                inputProps={{
+                  autocomplete: 'new-password',
+                  form: {
+                    autocomplete: 'off',
+                  },
+                }}
+                label="Script"
+                variant="outlined"
+                value={script}
+                onChange={handleScriptChange}
+                fullWidth
+                multiline
+                rows={10}
+                sx={{ marginX: 2 }} // Adding horizontal margin
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleClick}
+                disabled={!script.trim()}
+                sx={{ marginTop: 2 }} // Adding some margin on top of the button
+              >
+                Practice
+              </Button>
+            </Box>
+          </>
         )}
         {showNewTextBox && (
           <TextField
