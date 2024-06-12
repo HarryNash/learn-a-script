@@ -208,7 +208,11 @@ const TextBoxWithButton: React.FC = () => {
           />
         )}
         {!attempt && <Box mt={2}> {difference} </Box>}
-        {!attempt && correctness != -1 && <Box mt={2}> {correctness}% correct </Box>}
+        {!attempt && correctness != -1 && (
+          <Box mt={2}>
+            That was {correctness}% correct, please {success ? 'continue' : 'try again'}.
+          </Box>
+        )}
         {firstPassAccuracy != -1 && <Typography>Total first pass accuracy: {firstPassAccuracy}%</Typography>}
         {endTime != 0 && <Typography>Total time: {Math.round((endTime - startTime) / 1000)} seconds</Typography>}
         {!attempt && gif && (
