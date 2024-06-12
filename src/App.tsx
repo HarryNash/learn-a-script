@@ -16,8 +16,8 @@ const TextBoxWithButton: React.FC = () => {
   const [difference, setDifference] = useState(<></>);
   const [gif, setGif] = useState('');
   const [scriptLineNumber, setScriptLineNumber] = useState(0);
-  const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
+  const [startTime, setStartTime] = useState(-1);
+  const [endTime, setEndTime] = useState(-1);
   const [firstAttempts, setFirstAttempts] = useState('');
   const [firstPassAccuracy, setFirstPassAccuracy] = useState(-1);
   const [enableSound, setEnableSound] = useState(true);
@@ -39,7 +39,7 @@ const TextBoxWithButton: React.FC = () => {
     setCorrectness(-1);
     setGif('');
     setStartTime(Date.now());
-    setEndTime(0);
+    setEndTime(-1);
   };
 
   const handleLoadSample = () => {
@@ -237,7 +237,7 @@ const TextBoxWithButton: React.FC = () => {
           </Box>
         )}
         {firstPassAccuracy != -1 && <Typography>Total first pass accuracy: {firstPassAccuracy}%</Typography>}
-        {endTime != 0 && <Typography>Total time: {Math.round((endTime - startTime) / 1000)} seconds</Typography>}
+        {endTime != -1 && <Typography>Total time: {Math.round((endTime - startTime) / 1000)} seconds</Typography>}
         {!attempt && gif && (
           <Box mt={2}>
             <img src={gif} alt={'reaction'} />

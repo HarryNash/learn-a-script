@@ -27,7 +27,6 @@
 
 # Things this should have
 
-
 - Fix first pass accuracy
 - Display hours, minutes, seconds instead of seconds
 - Link a proper URL on AWS
