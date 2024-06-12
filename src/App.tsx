@@ -50,17 +50,23 @@ const TextBoxWithButton: React.FC = () => {
     );
   };
 
+  const calculateLevenshteinCorrectness = (attempt, expected) => {
+    const levenshteinDistance = levenshtein.get(attempt, expected);
+    const levenshteinRatio = levenshteinDistance / Math.max(attempt.length, expected.length);
+    return 1 - levenshteinRatio;
+  };
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if (script.split('\n').length != firstAttempts.split('\n').length) {
         setFirstAttempts(firstAttempts + attempt + '\n');
       }
       const expected = script.split('\n')[scriptLineNumber];
-      const levenshteinDistance = levenshtein.get(attempt, expected);
-      const levenshteinCorrectness = 1 - levenshteinDistance / expected.length;
+
       const diffObj = Diff.diffWords(attempt, expected);
       const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
       setDifference(diffFound);
+      const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected);
       setCorrectness(levenshteinCorrectness);
       if (levenshteinCorrectness >= 0.95) {
         setGif(happyGif);
@@ -80,14 +86,7 @@ const TextBoxWithButton: React.FC = () => {
         setEndTime(Date.now());
         const attemptsOneLine = (firstAttempts + attempt + '\n').replace(/\r?\n|\r/g, '');
         const scriptOneLine = script.replace(/\r?\n|\r/g, '');
-        const diff = levenshtein.get(attemptsOneLine, scriptOneLine);
-        const ratio = diff / scriptOneLine.length;
-        const correctness = 1 - ratio;
-        console.log(attemptsOneLine);
-        console.log(scriptOneLine);
-        console.log(diff);
-        console.log(ratio);
-        console.log(correctness);
+        const correctness = calculateLevenshteinCorrectness(attemptsOneLine, scriptOneLine);
         setFirstPassAccuracy(correctness);
       }
 
