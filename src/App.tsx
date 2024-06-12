@@ -178,7 +178,7 @@ const TextBoxWithButton: React.FC = () => {
                 onChange={handleSliderChange}
                 aria-labelledby="input-slider"
               />
-              <Typography>Minimum % Correctness to Proceed</Typography>
+              <Typography>Minimum % Correctness to Continue</Typography>
             </Box>
             <Box display="flex" alignItems="center">
               <Switch checked={enableSound} onChange={handleEnableSound} />
@@ -258,11 +258,12 @@ const TextBoxWithButton: React.FC = () => {
         {!attempt && <Box mt={2}> {difference} </Box>}
         {!attempt && showNewTextBox && correctness != -1 && (
           <Box mt={2}>
-            That was {correctness}% correct, please {success ? 'continue' : 'try again'}.
+            <Typography>Correctness: {correctness}%</Typography>
+            {!isFinished() && <Typography>Please {success ? 'continue' : 'try again'}.</Typography>}
           </Box>
         )}
-        {firstPassAccuracy != -1 && <Typography>Total first pass accuracy: {firstPassAccuracy}%</Typography>}
-        {endTime != -1 && <Typography>Total time: {formatDuration(Math.round(endTime - startTime))}</Typography>}
+        {firstPassAccuracy != -1 && <Typography>Total First Pass Correctness: {firstPassAccuracy}%</Typography>}
+        {endTime != -1 && <Typography>Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>}
         {!attempt && gif && (
           <Box mt={2}>
             <img src={gif} alt={'reaction'} />
