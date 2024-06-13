@@ -28,11 +28,11 @@
 - Display hours, minutes, seconds instead of seconds
 - Make a nicer title
 - Use a consistent theme
+- Link a proper URL on AWS
 
 # Things this should have
 
-- Link a proper URL on AWS
-- Add that real link to my LinkTree
+- Share with some people I know
 - Post on reddit
 
 # Extras
