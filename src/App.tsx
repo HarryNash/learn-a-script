@@ -203,7 +203,7 @@ const TextBoxWithButton: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box display="flex" flexDirection="column" alignItems="center" paddingY={5}>
+      <Box display="flex" flexDirection="column" alignItems="center">
         <Box display="flex" alignItems="center">
           <img src={Logo} alt="Logo" style={{ height: '100px' }} />
           <Typography variant="h3" style={{ fontFamily: 'Papyrus' }}>
@@ -212,12 +212,12 @@ const TextBoxWithButton: React.FC = () => {
         </Box>
         {!showNewTextBox && (
           <>
-            <Typography fontStyle="italic" align="center">
+            <Typography fontStyle="italic" align="center" sx={{ marginTop: 2 }}>
               I find that typing out a monologue without looking at it is a great way for me to commit it to memory. I
               created this app in order to highlight any subtle mistakes I may have made in my recall. I hope you find
               some use in it too!
             </Typography>
-            <Box display="flex" alignItems="center">
+            <Box display="flex" alignItems="center" sx={{ marginTop: 2 }}>
               <Switch checked={enableSound} onChange={handleEnableSound} />
               <Typography>Enable Sound</Typography>
             </Box>
@@ -241,9 +241,11 @@ const TextBoxWithButton: React.FC = () => {
                 }}
                 endAdornment={<InputAdornment position="end">%</InputAdornment>}
               />
-              <Typography>Correctness to Pass</Typography>
+              <Typography sx={{ marginLeft: 1 }}>Correctness to Pass</Typography>
             </Box>
-            <Button onClick={handleLoadSample}>Load Sample Script</Button>
+            <Button onClick={handleLoadSample} sx={{ marginTop: 2 }}>
+              Load Sample Script
+            </Button>
             <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%">
               <TextField
                 label="Script"
@@ -253,21 +255,24 @@ const TextBoxWithButton: React.FC = () => {
                 fullWidth
                 multiline
                 rows={10}
+                sx={{ marginTop: 2 }}
               />
-              <Button variant="contained" onClick={handleClick} disabled={!script.trim()}>
-                Practice
-              </Button>
             </Box>
+            <Button variant="contained" onClick={handleClick} sx={{ marginTop: 2 }} disabled={!script.trim()}>
+              Practice
+            </Button>
           </>
         )}
         {isFinished() && (
-          <Button variant="contained" onClick={handleFinishPress}>
+          <Button variant="contained" onClick={handleFinishPress} sx={{ marginTop: 2 }}>
             Finish
           </Button>
         )}
         {!isFinished() && showNewTextBox && (
           <>
-            <Button onClick={handleFinishPress}>Back</Button>
+            <Button onClick={handleFinishPress} sx={{ marginTop: 2 }}>
+              Back
+            </Button>
             <TextField
               label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
               inputProps={{
@@ -282,13 +287,13 @@ const TextBoxWithButton: React.FC = () => {
               onKeyPress={handleKeyPress}
               error={!success}
               fullWidth
-              sx={{ maxWidth: 500, mt: 2 }}
+              sx={{ maxWidth: '50%', marginTop: 2 }}
             />
           </>
         )}
-        {!attempt && difference}
         {!attempt && showNewTextBox && correctness != -1 && (
-          <Box mt={2}>
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" sx={{ marginTop: 2 }}>
+            {difference}
             <Typography align="center" style={{ color: success ? 'green' : 'red' }}>
               Correctness: {correctness}%
             </Typography>
@@ -301,7 +306,9 @@ const TextBoxWithButton: React.FC = () => {
         )}
         {!attempt && gif && <img src={gif} alt={'reaction'} />}
         {firstPassAccuracy != -1 && (
-          <Typography align="center">Total First Pass Correctness: {firstPassAccuracy}%</Typography>
+          <Typography align="center" sx={{ marginTop: 2 }}>
+            Total First Pass Correctness: {firstPassAccuracy}%
+          </Typography>
         )}
         {endTime != -1 && (
           <Typography align="center">Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>
