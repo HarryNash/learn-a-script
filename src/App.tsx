@@ -1,5 +1,16 @@
 import React, { useState } from 'react';
-import { Button, TextField, Box, Typography, Link, Switch, Slider, createTheme, ThemeProvider } from '@mui/material';
+import {
+  Button,
+  TextField,
+  Box,
+  Typography,
+  Link,
+  Switch,
+  createTheme,
+  ThemeProvider,
+  Input,
+  InputAdornment,
+} from '@mui/material';
 import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
@@ -82,7 +93,7 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleLoadSample = () => {
     setScript(
-      "Now Linus, I want you to take a good look at Charlie Brown's face.\nWould you please hold still a minute, Charlie Brown, I want Linus to study your face.\nNow, this is what you call a Failure Face, Linus."
+      'I was robbed!\nI spent the whole night waiting for the Great Pumpkin when I could have been out for tricks or treats!\nHalloween is over and I missed it!\nYou blockhead!.'
     );
   };
 
@@ -126,6 +137,10 @@ const TextBoxWithButton: React.FC = () => {
     const levenshteinRatio = levenshteinDistance / Math.max(attempt.length, expected.length);
     const percentageCorrectness = 100 * (1 - levenshteinRatio);
     return Math.round(percentageCorrectness);
+  };
+
+  const handleCorrectnessChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMinimumCorrectness(event.target.value === '' ? 0 : Number(event.target.value));
   };
 
   const handleFinishPress = () => {
@@ -175,131 +190,133 @@ const TextBoxWithButton: React.FC = () => {
     return scriptLineNumber == script.split('\n').length;
   };
 
-  const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setMinimumCorrectness(newValue as number);
-  };
-
   return (
-    <div className="App">
-      <ThemeProvider theme={theme}>
-        <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" paddingY={5}>
-          <Box display="flex" alignItems="center">
-            <img src={Logo} alt="Logo" style={{ marginRight: '10px', height: '100px' }} />
-            <Typography variant="h3" style={{ fontFamily: 'Papyrus' }}>
-              Learn a Script
+    <ThemeProvider theme={theme}>
+      <Box display="flex" flexDirection="column" alignItems="center" minHeight="100vh" paddingY={5}>
+        <Box display="flex" alignItems="center">
+          <img src={Logo} alt="Logo" style={{ height: '100px' }} />
+          <Typography variant="h3" style={{ fontFamily: 'Papyrus' }}>
+            Learn a Script
+          </Typography>
+        </Box>
+        {!showNewTextBox && (
+          <>
+            <Typography>
+              I find that typing out a monologue without looking at it is a great way for me to commit it to memory. I
+              created this app in order to highlight any subtle mistakes I may have made in my recall. I hope you find
+              some use in it too!
             </Typography>
-          </Box>
-          {!showNewTextBox && (
-            <>
-              <Box display="flex" alignItems="center" width="30%">
-                <Slider
-                  aria-label="Always visible"
-                  valueLabelDisplay="on"
-                  value={typeof minimumCorrectness === 'number' ? minimumCorrectness : 0}
-                  onChange={handleSliderChange}
-                  aria-labelledby="input-slider"
-                />
-                <Typography>Correctness to Pass</Typography>
-              </Box>
-              <Box display="flex" alignItems="center">
-                <Switch checked={enableSound} onChange={handleEnableSound} />
-                <Typography>Enable Sound</Typography>
-              </Box>
+            <Box display="flex" alignItems="center">
+              <Switch checked={enableSound} onChange={handleEnableSound} />
+              <Typography>Enable Sound</Typography>
+            </Box>
 
-              <Box display="flex" alignItems="center">
-                <Switch checked={checkCase} onChange={handleCheckCase} />
-                <Typography>Check Upper and Lower Case</Typography>
-              </Box>
+            <Box display="flex" alignItems="center">
+              <Switch checked={checkCase} onChange={handleCheckCase} />
+              <Typography>Check Upper and Lower Case</Typography>
+            </Box>
 
-              <Box display="flex" alignItems="center">
-                <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
-                <Typography>Check Punctuation</Typography>
-              </Box>
-
+            <Box display="flex" alignItems="center">
+              <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
+              <Typography>Check Punctuation</Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+              <Input
+                value={minimumCorrectness}
+                onChange={handleCorrectnessChange}
+                inputProps={{
+                  step: 5,
+                  min: 0,
+                  max: 100,
+                  type: 'number',
+                  'aria-labelledby': 'input-slider',
+                }}
+                endAdornment={<InputAdornment position="end">%</InputAdornment>}
+              />
+              <Typography>Correctness to Pass</Typography>
+            </Box>
+            <Button
+              variant="contained"
+              onClick={handleLoadSample}
+              sx={{ marginTop: 2 }} // Adding some margin on top of the button
+            >
+              Load Sample Script
+            </Button>
+            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
+              <TextField
+                inputProps={{
+                  autocomplete: 'new-password',
+                  form: {
+                    autocomplete: 'off',
+                  },
+                }}
+                label="Script"
+                variant="outlined"
+                value={script}
+                onChange={handleScriptChange}
+                fullWidth
+                multiline
+                rows={10}
+                sx={{ marginX: 2 }} // Adding horizontal margin
+              />
               <Button
                 variant="contained"
-                onClick={handleLoadSample}
+                onClick={handleClick}
+                disabled={!script.trim()}
                 sx={{ marginTop: 2 }} // Adding some margin on top of the button
               >
-                Load Sample Script
+                Practice
               </Button>
-              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
-                <TextField
-                  inputProps={{
-                    autocomplete: 'new-password',
-                    form: {
-                      autocomplete: 'off',
-                    },
-                  }}
-                  label="Script"
-                  variant="outlined"
-                  value={script}
-                  onChange={handleScriptChange}
-                  fullWidth
-                  multiline
-                  rows={10}
-                  sx={{ marginX: 2 }} // Adding horizontal margin
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleClick}
-                  disabled={!script.trim()}
-                  sx={{ marginTop: 2 }} // Adding some margin on top of the button
-                >
-                  Practice
-                </Button>
-              </Box>
-            </>
-          )}
-          {isFinished() && (
-            <Button variant="contained" onClick={handleFinishPress}>
-              Finish
-            </Button>
-          )}
-          {!isFinished() && showNewTextBox && (
-            <TextField
-              label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
-              inputProps={{
-                autocomplete: 'new-password',
-                form: {
-                  autocomplete: 'off',
-                },
-              }}
-              variant="outlined"
-              value={attempt}
-              onChange={handleAttemptChange}
-              onKeyPress={handleKeyPress}
-              error={!success}
-              fullWidth
-              sx={{ maxWidth: 500, mt: 2 }}
-            />
-          )}
-          {!attempt && <Box mt={2}> {difference} </Box>}
-          {!attempt && showNewTextBox && correctness != -1 && (
-            <Box mt={2}>
-              <Typography style={{ color: success ? 'green' : 'red' }}>Correctness: {correctness}%</Typography>
-              {!isFinished() && (
-                <Typography style={{ color: success ? 'green' : 'red' }}>
-                  Please try {success ? 'the next line' : 'that line again'}.
-                </Typography>
-              )}
             </Box>
-          )}
-          {firstPassAccuracy != -1 && <Typography>Total First Pass Correctness: {firstPassAccuracy}%</Typography>}
-          {endTime != -1 && (
-            <Typography>Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>
-          )}
-          {!attempt && gif && (
-            <Box mt={2}>
-              <img src={gif} alt={'reaction'} />
-            </Box>
-          )}
-        </Box>
-        <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
-          Built by Harry Nash 🏗️
-        </Link>
-      </ThemeProvider>
-    </div>
+          </>
+        )}
+        {isFinished() && (
+          <Button variant="contained" onClick={handleFinishPress}>
+            Finish
+          </Button>
+        )}
+        {!isFinished() && showNewTextBox && (
+          <TextField
+            label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
+            inputProps={{
+              autocomplete: 'new-password',
+              form: {
+                autocomplete: 'off',
+              },
+            }}
+            variant="outlined"
+            value={attempt}
+            onChange={handleAttemptChange}
+            onKeyPress={handleKeyPress}
+            error={!success}
+            fullWidth
+            sx={{ maxWidth: 500, mt: 2 }}
+          />
+        )}
+        {!attempt && <Box mt={2}> {difference} </Box>}
+        {!attempt && showNewTextBox && correctness != -1 && (
+          <Box mt={2}>
+            <Typography style={{ color: success ? 'green' : 'red' }}>Correctness: {correctness}%</Typography>
+            {!isFinished() && (
+              <Typography style={{ color: success ? 'green' : 'red' }}>
+                Please try {success ? 'the next line' : 'that line again'}.
+              </Typography>
+            )}
+          </Box>
+        )}
+        {firstPassAccuracy != -1 && <Typography>Total First Pass Correctness: {firstPassAccuracy}%</Typography>}
+        {endTime != -1 && <Typography>Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>}
+        {!attempt && gif && (
+          <Box mt={2}>
+            <img src={gif} alt={'reaction'} />
+          </Box>
+        )}
+      </Box>
+      <img src="https://visitor-badge.glitch.me/badge?page_id=harrynash.learnascript" alt="visitor badge" />
+      <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
+        Built by Harry Nash 🏗️
+      </Link>
+    </ThemeProvider>
   );
 };
 
