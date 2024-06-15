@@ -214,8 +214,8 @@ const TextBoxWithButton: React.FC = () => {
           <>
             <Typography fontStyle="italic" align="center" sx={{ marginTop: 2 }}>
               I find that typing out a monologue without looking at it is a great way for me to commit it to memory. I
-              created this app in order to highlight any subtle mistakes I may have made in my recall. I hope you find
-              some use in it too!
+              created this app in order to quickly and reliably identify any mistakes I may have made in my recall. I
+              hope you find some use in it too!
             </Typography>
             <Box display="flex" alignItems="center" sx={{ marginTop: 2 }}>
               <Switch checked={enableSound} onChange={handleEnableSound} />
