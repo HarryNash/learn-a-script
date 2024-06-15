@@ -10,7 +10,6 @@ import {
   ThemeProvider,
   Input,
   InputAdornment,
-  makeStyles,
   BottomNavigation,
 } from '@mui/material';
 import levenshtein from 'fast-levenshtein';
@@ -191,14 +190,6 @@ const TextBoxWithButton: React.FC = () => {
   const isFinished = () => {
     return scriptLineNumber == script.split('\n').length;
   };
-
-  const useStyles = makeStyles({
-    root: {
-      width: '100%',
-      position: 'fixed',
-      bottom: 0,
-    },
-  });
 
   return (
     <ThemeProvider theme={theme}>
