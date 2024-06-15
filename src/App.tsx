@@ -22,7 +22,6 @@ const Footer = () => {
   return (
     <Box
       sx={{
-        position: 'absolute',
         left: 0,
         bottom: 0,
         right: 0,
@@ -227,7 +226,7 @@ const TextBoxWithButton: React.FC = () => {
           </Box>
           {!showNewTextBox && (
             <>
-              <Typography>
+              <Typography fontStyle="italic" align="center">
                 I find that typing out a monologue without looking at it is a great way for me to commit it to memory. I
                 created this app in order to highlight any subtle mistakes I may have made in my recall. I hope you find
                 some use in it too!
@@ -262,7 +261,6 @@ const TextBoxWithButton: React.FC = () => {
                 <Typography>Correctness to Pass</Typography>
               </Box>
               <Button
-                variant="contained"
                 onClick={handleLoadSample}
                 sx={{ marginTop: 2 }} // Adding some margin on top of the button
               >
@@ -302,22 +300,25 @@ const TextBoxWithButton: React.FC = () => {
             </Button>
           )}
           {!isFinished() && showNewTextBox && (
-            <TextField
-              label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
-              inputProps={{
-                autocomplete: 'new-password',
-                form: {
-                  autocomplete: 'off',
-                },
-              }}
-              variant="outlined"
-              value={attempt}
-              onChange={handleAttemptChange}
-              onKeyPress={handleKeyPress}
-              error={!success}
-              fullWidth
-              sx={{ maxWidth: 500, mt: 2 }}
-            />
+            <>
+              <Button onClick={handleFinishPress}>Back</Button>
+              <TextField
+                label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
+                inputProps={{
+                  autocomplete: 'new-password',
+                  form: {
+                    autocomplete: 'off',
+                  },
+                }}
+                variant="outlined"
+                value={attempt}
+                onChange={handleAttemptChange}
+                onKeyPress={handleKeyPress}
+                error={!success}
+                fullWidth
+                sx={{ maxWidth: 500, mt: 2 }}
+              />
+            </>
           )}
           {!attempt && <Box mt={2}> {difference} </Box>}
           {!attempt && showNewTextBox && correctness != -1 && (
@@ -341,8 +342,8 @@ const TextBoxWithButton: React.FC = () => {
           )}
         </Box>
         <Box component="footer" py={2} color="white" textAlign="center"></Box>
-        <Footer />
       </Box>
+      <Footer />
     </ThemeProvider>
   );
 };
