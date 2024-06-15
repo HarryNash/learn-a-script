@@ -10,7 +10,6 @@ import {
   ThemeProvider,
   Input,
   InputAdornment,
-  BottomNavigation,
 } from '@mui/material';
 import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
@@ -18,6 +17,31 @@ import happyGif from './happy.gif';
 import sadGif from './crying.gif';
 import * as Diff from 'diff';
 import './App.css'; // Import the CSS file
+
+const Footer = () => {
+  return (
+    <Box
+      sx={{
+        position: 'absolute',
+        left: 0,
+        bottom: 0,
+        right: 0,
+      }}
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      paddingY={5}
+      p={2}
+    >
+      <a href="http://hits.dwyl.com/harrynash/learnascript">
+        <img src="https://hits.dwyl.com/harrynash/learnascript.svg?style=flat-square&show=unique" alt="HitCount" />
+      </a>
+      <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
+        Built by Harry Nash 🏗️
+      </Link>
+    </Box>
+  );
+};
 
 function formatDuration(ms) {
   let seconds = Math.floor(ms / 1000);
@@ -317,15 +341,8 @@ const TextBoxWithButton: React.FC = () => {
           )}
         </Box>
         <Box component="footer" py={2} color="white" textAlign="center"></Box>
+        <Footer />
       </Box>
-      <BottomNavigation>
-        <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
-          Built by Harry Nash 🏗️
-        </Link>
-        <a href="http://hits.dwyl.com/harrynash/learnascript">
-          <img src="https://hits.dwyl.com/harrynash/learnascript.svg?style=flat-square&show=unique" alt="HitCount" />
-        </a>
-      </BottomNavigation>
     </ThemeProvider>
   );
 };
