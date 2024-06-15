@@ -18,30 +18,6 @@ import sadGif from './crying.gif';
 import * as Diff from 'diff';
 import './App.css'; // Import the CSS file
 
-const Footer = () => {
-  return (
-    <Box
-      sx={{
-        left: 0,
-        bottom: 0,
-        right: 0,
-      }}
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      paddingY={5}
-      p={2}
-    >
-      <a href="http://hits.dwyl.com/harrynash/learnascript">
-        <img src="https://hits.dwyl.com/harrynash/learnascript.svg?style=flat-square&show=unique" alt="HitCount" />
-      </a>
-      <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
-        Built by Harry Nash 🏗️
-      </Link>
-    </Box>
-  );
-};
-
 function formatDuration(ms) {
   let seconds = Math.floor(ms / 1000);
   let minutes = Math.floor(seconds / 60);
@@ -87,15 +63,6 @@ const TextBoxWithButton: React.FC = () => {
   const [checkCase, setCheckCase] = useState(true);
   const [checkPunctuation, setCheckPunctuation] = useState(true);
   const [minimumCorrectness, setMinimumCorrectness] = useState(95);
-
-  // Create a green theme
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#64d989', // Green
-      },
-    },
-  });
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
@@ -192,19 +159,18 @@ const TextBoxWithButton: React.FC = () => {
       setDifference(diffFound);
       const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected, checkCase, checkPunctuation);
       setCorrectness(levenshteinCorrectness);
+      let sound = './ok.mp3';
       if (levenshteinCorrectness >= minimumCorrectness) {
         setGif(happyGif);
         setSuccess(true);
         setScriptLineNumber(scriptLineNumber + 1);
-        if (enableSound) {
-          new Audio('./ok.mp3').play();
-        }
       } else {
         setGif(sadGif);
         setSuccess(false);
-        if (enableSound) {
-          new Audio('./fail.mp3').play();
-        }
+        sound = './fail.mp3';
+      }
+      if (enableSound) {
+        new Audio(sound).play();
       }
       setAttempt('');
     }
@@ -214,136 +180,134 @@ const TextBoxWithButton: React.FC = () => {
     return scriptLineNumber == script.split('\n').length;
   };
 
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#64d989',
+      },
+    },
+  });
+
+  const Footer = () => {
+    return (
+      <Box display="flex" flexDirection="column" alignItems="center" paddingY={10}>
+        <a href="http://hits.dwyl.com/harrynash/learnascript">
+          <img src="https://hits.dwyl.com/harrynash/learnascript.svg?style=flat-square&show=unique" alt="HitCount" />
+        </a>
+        <Link href="https://linktr.ee/harrynash" target="_blank" rel="noopener">
+          Built by Harry Nash 🏗️
+        </Link>
+      </Box>
+    );
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <Box display="flex" flexDirection="column">
-        <Box display="flex" flexDirection="column" alignItems="center" paddingY={5} p={2}>
-          <Box display="flex" alignItems="center">
-            <img src={Logo} alt="Logo" style={{ height: '100px' }} />
-            <Typography variant="h3" style={{ fontFamily: 'Papyrus' }}>
-              Learn a Script
-            </Typography>
-          </Box>
-          {!showNewTextBox && (
-            <>
-              <Typography fontStyle="italic" align="center">
-                I find that typing out a monologue without looking at it is a great way for me to commit it to memory. I
-                created this app in order to highlight any subtle mistakes I may have made in my recall. I hope you find
-                some use in it too!
-              </Typography>
-              <Box display="flex" alignItems="center">
-                <Switch checked={enableSound} onChange={handleEnableSound} />
-                <Typography>Enable Sound</Typography>
-              </Box>
-
-              <Box display="flex" alignItems="center">
-                <Switch checked={checkCase} onChange={handleCheckCase} />
-                <Typography>Check Upper and Lower Case</Typography>
-              </Box>
-
-              <Box display="flex" alignItems="center">
-                <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
-                <Typography>Check Punctuation</Typography>
-              </Box>
-              <Box display="flex" alignItems="center">
-                <Input
-                  value={minimumCorrectness}
-                  onChange={handleCorrectnessChange}
-                  inputProps={{
-                    step: 5,
-                    min: 0,
-                    max: 100,
-                    type: 'number',
-                    'aria-labelledby': 'input-slider',
-                  }}
-                  endAdornment={<InputAdornment position="end">%</InputAdornment>}
-                />
-                <Typography>Correctness to Pass</Typography>
-              </Box>
-              <Button
-                onClick={handleLoadSample}
-                sx={{ marginTop: 2 }} // Adding some margin on top of the button
-              >
-                Load Sample Script
-              </Button>
-              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%" p={2}>
-                <TextField
-                  inputProps={{
-                    autocomplete: 'new-password',
-                    form: {
-                      autocomplete: 'off',
-                    },
-                  }}
-                  label="Script"
-                  variant="outlined"
-                  value={script}
-                  onChange={handleScriptChange}
-                  fullWidth
-                  multiline
-                  rows={10}
-                  sx={{ marginX: 2 }} // Adding horizontal margin
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleClick}
-                  disabled={!script.trim()}
-                  sx={{ marginTop: 2 }} // Adding some margin on top of the button
-                >
-                  Practice
-                </Button>
-              </Box>
-            </>
-          )}
-          {isFinished() && (
-            <Button variant="contained" onClick={handleFinishPress}>
-              Finish
-            </Button>
-          )}
-          {!isFinished() && showNewTextBox && (
-            <>
-              <Button onClick={handleFinishPress}>Back</Button>
-              <TextField
-                label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
-                inputProps={{
-                  autocomplete: 'new-password',
-                  form: {
-                    autocomplete: 'off',
-                  },
-                }}
-                variant="outlined"
-                value={attempt}
-                onChange={handleAttemptChange}
-                onKeyPress={handleKeyPress}
-                error={!success}
-                fullWidth
-                sx={{ maxWidth: 500, mt: 2 }}
-              />
-            </>
-          )}
-          {!attempt && <Box mt={2}> {difference} </Box>}
-          {!attempt && showNewTextBox && correctness != -1 && (
-            <Box mt={2}>
-              <Typography style={{ color: success ? 'green' : 'red' }}>Correctness: {correctness}%</Typography>
-              {!isFinished() && (
-                <Typography style={{ color: success ? 'green' : 'red' }}>
-                  Please try {success ? 'the next line' : 'that line again'}.
-                </Typography>
-              )}
-            </Box>
-          )}
-          {firstPassAccuracy != -1 && <Typography>Total First Pass Correctness: {firstPassAccuracy}%</Typography>}
-          {endTime != -1 && (
-            <Typography>Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>
-          )}
-          {!attempt && gif && (
-            <Box mt={2}>
-              <img src={gif} alt={'reaction'} />
-            </Box>
-          )}
+      <Box display="flex" flexDirection="column" alignItems="center" paddingY={5}>
+        <Box display="flex" alignItems="center">
+          <img src={Logo} alt="Logo" style={{ height: '100px' }} />
+          <Typography variant="h3" style={{ fontFamily: 'Papyrus' }}>
+            Learn a Script
+          </Typography>
         </Box>
-        <Box component="footer" py={2} color="white" textAlign="center"></Box>
+        {!showNewTextBox && (
+          <>
+            <Typography fontStyle="italic" align="center">
+              I find that typing out a monologue without looking at it is a great way for me to commit it to memory. I
+              created this app in order to highlight any subtle mistakes I may have made in my recall. I hope you find
+              some use in it too!
+            </Typography>
+            <Box display="flex" alignItems="center">
+              <Switch checked={enableSound} onChange={handleEnableSound} />
+              <Typography>Enable Sound</Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+              <Switch checked={checkCase} onChange={handleCheckCase} />
+              <Typography>Check Upper and Lower Case</Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+              <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
+              <Typography>Check Punctuation</Typography>
+            </Box>
+            <Box display="flex" alignItems="center">
+              <Input
+                value={minimumCorrectness}
+                onChange={handleCorrectnessChange}
+                inputProps={{
+                  step: 5,
+                  min: 0,
+                  max: 100,
+                  type: 'number',
+                }}
+                endAdornment={<InputAdornment position="end">%</InputAdornment>}
+              />
+              <Typography>Correctness to Pass</Typography>
+            </Box>
+            <Button onClick={handleLoadSample}>Load Sample Script</Button>
+            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%">
+              <TextField
+                label="Script"
+                variant="outlined"
+                value={script}
+                onChange={handleScriptChange}
+                fullWidth
+                multiline
+                rows={10}
+              />
+              <Button variant="contained" onClick={handleClick} disabled={!script.trim()}>
+                Practice
+              </Button>
+            </Box>
+          </>
+        )}
+        {isFinished() && (
+          <Button variant="contained" onClick={handleFinishPress}>
+            Finish
+          </Button>
+        )}
+        {!isFinished() && showNewTextBox && (
+          <>
+            <Button onClick={handleFinishPress}>Back</Button>
+            <TextField
+              label={`Line ${scriptLineNumber + 1}/${script.split('\n').length}`}
+              inputProps={{
+                autocomplete: 'new-password',
+                form: {
+                  autocomplete: 'off',
+                },
+              }}
+              variant="outlined"
+              value={attempt}
+              onChange={handleAttemptChange}
+              onKeyPress={handleKeyPress}
+              error={!success}
+              fullWidth
+              sx={{ maxWidth: 500, mt: 2 }}
+            />
+          </>
+        )}
+        {!attempt && difference}
+        {!attempt && showNewTextBox && correctness != -1 && (
+          <Box mt={2}>
+            <Typography align="center" style={{ color: success ? 'green' : 'red' }}>
+              Correctness: {correctness}%
+            </Typography>
+            {!isFinished() && (
+              <Typography align="center" style={{ color: success ? 'green' : 'red' }}>
+                Please try {success ? 'the next line' : 'that line again'}.
+              </Typography>
+            )}
+          </Box>
+        )}
+        {!attempt && gif && <img src={gif} alt={'reaction'} />}
+        {firstPassAccuracy != -1 && (
+          <Typography align="center">Total First Pass Correctness: {firstPassAccuracy}%</Typography>
+        )}
+        {endTime != -1 && (
+          <Typography align="center">Total Time Taken: {formatDuration(Math.round(endTime - startTime))}</Typography>
+        )}
       </Box>
-      <Footer />
+      {!showNewTextBox && <Footer />}
     </ThemeProvider>
   );
 };
