@@ -1,43 +1,9 @@
 # Done
 
-- I enter my script in a box
-- I click a button to commence
-- The script in a box disappears from sight
-- It runs through each line in the script
-  - If I get it 100% correct then display a joyous gif and continue
-  - If I get it 95%> correct then display a pleased gif with a git diff showing my mistake, conceal the git diff whilst there is new text in the box
-  - If I get it <95% correct then display a sad gif with a git diff showing my mistake, conceal the git diff whilst there is new text in the box
-- Add label for textfield eg "Line 3/10"
-- Display time worked
-- Add nice icon
-- Add nice title
-- Stop 1password
-- Deploy it
-- Add link to my Linktree at the bottom
-- Add sound
-- Highlight instead of change colour to make it clearer where the problems are
-- Make it so gif fades don't intertwine
-- Add button to load in a sample script (king icon) "A horse! A horse! My kingdom for a horse!" (this is convenient for testing it on a phone)
-- Pop up the percentage correctness along with the gif
-- Display total accuracy correctly of first attempts
-- Say try again if you're beneath the threshold
-- Stop showing first pass accuracy after you've restarted
-- Configure whether we care about sound, punctuation, case and minimum percentage correctness
-- Add a finish button so you can see the correctness of your last line
-- Fix first pass accuracy
-- Display hours, minutes, seconds instead of seconds
-- Make a nicer title
-- Use a consistent theme
-- Link a proper URL on AWS
-
-# Things this should have
-
-- Share with some people I know
+- Instead of 'Load Sample Script' just load the text in by default
+- Save the text you added in a cookie
+- Rename to 'Learn a Monologue'
 - Post on reddit
-
-# Extras
-
-- Have a starter-mode where it displays a random selection of half the words
 
 # Setting up react + typescript + eslint + prettier + husky + vscode
 
