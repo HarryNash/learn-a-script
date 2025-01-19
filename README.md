@@ -2,7 +2,6 @@
 
 - Instead of 'Load Sample Script' just load the text in by default
 - Save the text you added in a cookie
-- Rename to 'Learn a Monologue'
 - Post on reddit
 
 # Setting up react + typescript + eslint + prettier + husky + vscode

@@ -213,7 +213,7 @@ const TextBoxWithButton: React.FC = () => {
         {!showNewTextBox && (
           <>
             <Typography fontStyle="italic" align="center" sx={{ marginTop: 2 }} p={2}>
-              I find that typing out a monologue without looking at it is a great way for me to commit it to memory. I
+              I find that typing out a script without looking at it is a great way for me to commit it to memory. I
               created this app in order to quickly and reliably identify any mistakes I may have made in my recall. I
               hope you find some use in it too!
             </Typography>
