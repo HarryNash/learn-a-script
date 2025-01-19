@@ -15,7 +15,7 @@ import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
 import sadGif from './crying.gif';
-import * as Diff from 'diff';
+import * as Diff from 'jsdiff';
 import './App.css'; // Import the CSS file
 
 function formatDuration(ms) {
@@ -46,8 +46,15 @@ const newlines = /\r?\n|\r/g;
 
 const punctuation = /[.,/#!$%^&*;:{}=\-_`~()]/g;
 
+const sampleScript = [
+  'I was robbed!',
+  'I spent the whole night waiting for the Great Pumpkin when I could have been out for tricks or treats!',
+  'Halloween is over and I missed it!',
+  'You blockhead!',
+].join('\n');
+
 const TextBoxWithButton: React.FC = () => {
-  const [script, setScript] = useState('');
+  const [script, setScript] = useState(sampleScript);
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
   const [correctness, setCorrectness] = useState(-1);
@@ -80,12 +87,6 @@ const TextBoxWithButton: React.FC = () => {
     setStartTime(Date.now());
     setEndTime(-1);
     setFirstAttempts('');
-  };
-
-  const handleLoadSample = () => {
-    setScript(
-      'I was robbed!\nI spent the whole night waiting for the Great Pumpkin when I could have been out for tricks or treats!\nHalloween is over and I missed it!\nYou blockhead!'
-    );
   };
 
   const handleEnableSound = () => {
@@ -243,9 +244,6 @@ const TextBoxWithButton: React.FC = () => {
               />
               <Typography sx={{ marginLeft: 1 }}>Correctness to Pass</Typography>
             </Box>
-            <Button onClick={handleLoadSample} sx={{ marginTop: 2 }}>
-              Load Sample Script
-            </Button>
             <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%">
               <TextField
                 label="Script"
