@@ -1,7 +1,8 @@
 # Done
 
-- Instead of 'Load Sample Script' just load the text in by default
 - Save the text you added in a cookie
+- Add a 'next' button
+- Allow you to finish a run with 'enter'
 - Post on reddit
 
 # Setting up react + typescript + eslint + prettier + husky + vscode
