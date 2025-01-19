@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@types/fast-levenshtein": "^0.0.4"
+    "@types/fast-levenshtein": "^0.0.4",
+    "prettier-eslint": "^16.3.0"
   }
 }

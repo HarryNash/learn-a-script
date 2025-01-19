@@ -22,9 +22,6 @@ module.exports = {
     'plugin:prettier/recommended',
   ],
   plugins: ['react', 'react-hooks', '@typescript-eslint'],
-  rules: {
-    // Define your custom ESLint rules here, if needed.
-  },
   settings: {
     react: {
       version: 'detect',
