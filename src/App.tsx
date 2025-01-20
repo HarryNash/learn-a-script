@@ -46,6 +46,8 @@ const newlines = /\r?\n|\r/g;
 
 const punctuation = /[.,/#!$%^&*;:{}=\-_`~()]/g;
 
+const savedScript = localStorage.getItem('script');
+
 const sampleScript = [
   'I was robbed!',
   'I spent the whole night waiting for the Great Pumpkin when I could have been out for tricks or treats!',
@@ -54,7 +56,7 @@ const sampleScript = [
 ].join('\n');
 
 const TextBoxWithButton: React.FC = () => {
-  const [script, setScript] = useState(sampleScript);
+  const [script, setScript] = useState(savedScript ? savedScript : sampleScript);
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
   const [correctness, setCorrectness] = useState(-1);
@@ -73,6 +75,7 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setScript(event.target.value);
+    localStorage.setItem('script', event.target.value);
   };
 
   const handleAttemptChange = (event: React.ChangeEvent<HTMLInputElement>) => {

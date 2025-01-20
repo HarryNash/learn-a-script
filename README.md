@@ -1,10 +1,3 @@
-# Done
-
-- Save the text you added in a cookie
-- Add a 'next' button
-- Allow you to finish a run with 'enter'
-- Post on reddit
-
 # Setting up react + typescript + eslint + prettier + husky + vscode
 
 - follow this guide but use yarn instead of npm because yarn can resolve the dependency clashes https://leandroaps.medium.com/setting-up-eslint-prettier-and-husky-in-a-typescript-based-react-18-project-a-comprehensive-8a87b91d5a28
