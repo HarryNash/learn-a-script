@@ -227,7 +227,7 @@ const TextBoxWithButton: React.FC = () => {
               <Typography>Check Upper and Lower Case</Typography>
             </Box>
             <Box display="flex" alignItems="center">
-              <Switch checked={checkPunctuation} defaultChecked onChange={handleCheckPunctuation} />
+              <Switch checked={checkPunctuation} onChange={handleCheckPunctuation} />
               <Typography>Check Punctuation</Typography>
             </Box>
             <Box display="flex" alignItems="center">
