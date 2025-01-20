@@ -15,7 +15,7 @@ import levenshtein from 'fast-levenshtein';
 import Logo from './logo.png';
 import happyGif from './happy.gif';
 import sadGif from './crying.gif';
-import * as Diff from 'jsdiff';
+import * as Diff from 'diff';
 import './App.css'; // Import the CSS file
 
 function formatDuration(ms) {
