@@ -1,4 +1,4 @@
-# Learn A Script
+# Learn a Script
 
 ## Website
 
