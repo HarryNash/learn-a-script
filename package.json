@@ -48,12 +48,6 @@
     "preparatory_prettier": "prettier --write .",
     "preparatory_eslint": "eslint --fix"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
