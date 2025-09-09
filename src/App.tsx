@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   TextField,
@@ -56,7 +56,8 @@ const sampleScript = [
 ].join('\n');
 
 const TextBoxWithButton: React.FC = () => {
-  const [script, setScript] = useState(savedScript ? savedScript : sampleScript);
+  const initialScript = savedScript ? savedScript : sampleScript;
+  const [script, setScript] = useState(initialScript);
   const [showNewTextBox, setShowNewTextBox] = useState(false);
   const [attempt, setAttempt] = useState('');
   const [correctness, setCorrectness] = useState(-1);
@@ -73,9 +74,71 @@ const TextBoxWithButton: React.FC = () => {
   const [checkPunctuation, setCheckPunctuation] = useState(true);
   const [minimumCorrectness, setMinimumCorrectness] = useState(95);
 
+  // Function to detect if script is in dialogue format
+  const detectDialogueMode = (scriptText: string) => {
+    const lines = scriptText.split('\n').filter((line) => line.trim() !== '');
+    if (lines.length === 0) return false;
+
+    return lines.every((line) => {
+      const trimmed = line.trim();
+      return trimmed.startsWith('Me: ') || trimmed.startsWith('Them: ');
+    });
+  };
+
+  const [isDialogueMode, setIsDialogueMode] = useState(detectDialogueMode(initialScript));
+
+  // Add keyboard event listener for global Enter key handling
+  useEffect(() => {
+    const handleGlobalKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        // Check if we're not focused on any input element
+        const activeElement = document.activeElement;
+        const isInputFocused =
+          activeElement &&
+          (activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.getAttribute('contenteditable') === 'true');
+
+        if (!isInputFocused) {
+          // If we're on the finish screen, trigger finish button
+          if (isFinished() && showNewTextBox) {
+            handleFinishPress();
+          }
+          // If we're on the home screen, trigger practice button
+          else if (!showNewTextBox && script.trim()) {
+            handleClick();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleGlobalKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyPress);
+    };
+  }, [showNewTextBox, script, scriptLineNumber]); // Dependencies to ensure we have current state
+
+  // Function to check if current line is "My" turn
+  const isMyTurn = (lineNumber: number) => {
+    const lines = script.split('\n');
+    if (lineNumber >= lines.length) return false;
+    return lines[lineNumber].trim().startsWith('Me: ');
+  };
+
+  // Function to get the content without the prefix
+  const getLineContent = (line: string) => {
+    if (line.startsWith('Me: ')) return line.substring(4);
+    if (line.startsWith('Them: ')) return line.substring(6);
+    return line;
+  };
+
   const handleScriptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setScript(event.target.value);
-    localStorage.setItem('script', event.target.value);
+    const newScript = event.target.value;
+    setScript(newScript);
+    localStorage.setItem('script', newScript);
+
+    // Check if the new script is in dialogue format
+    setIsDialogueMode(detectDialogueMode(newScript));
   };
 
   const handleAttemptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +153,9 @@ const TextBoxWithButton: React.FC = () => {
     setStartTime(Date.now());
     setEndTime(-1);
     setFirstAttempts('');
+
+    // Set dialogue mode based on current script
+    setIsDialogueMode(detectDialogueMode(script));
   };
 
   const handleEnableSound = () => {
@@ -150,11 +216,22 @@ const TextBoxWithButton: React.FC = () => {
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      if (firstAttempts.split('\n').length - 1 == scriptLineNumber) {
-        setFirstAttempts(firstAttempts + attempt + '\n');
+      if (isDialogueMode) {
+        handleDialogueKeyPress();
+      } else {
+        handleNormalKeyPress();
       }
-      const expected = script.split('\n')[scriptLineNumber];
+    }
+  };
 
+  const handleDialogueKeyPress = () => {
+    const currentLine = script.split('\n')[scriptLineNumber];
+    const myTurn = isMyTurn(scriptLineNumber);
+
+    if (myTurn) {
+      // It's my turn to speak - always show diff comparison
+      // Check if their input matches the expected line (without "Me: " prefix)
+      const expected = getLineContent(currentLine);
       const diffObj = Diff.diffWords(
         applyLineSettings(attempt, checkCase, checkPunctuation),
         applyLineSettings(expected, checkCase, checkPunctuation)
@@ -163,6 +240,11 @@ const TextBoxWithButton: React.FC = () => {
       setDifference(diffFound);
       const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected, checkCase, checkPunctuation);
       setCorrectness(levenshteinCorrectness);
+
+      if (firstAttempts.split('\n').length - 1 == scriptLineNumber) {
+        setFirstAttempts(firstAttempts + attempt + '\n');
+      }
+
       let sound = './ok.mp3';
       if (levenshteinCorrectness >= minimumCorrectness) {
         setGif(happyGif);
@@ -177,7 +259,75 @@ const TextBoxWithButton: React.FC = () => {
         new Audio(sound).play();
       }
       setAttempt('');
+    } else {
+      // It's their turn to speak
+      if (attempt.trim() !== '') {
+        // User typed something when they should have just pressed enter - this is an error
+        setGif(sadGif);
+        setSuccess(false);
+        setCorrectness(0);
+        setDifference(
+          <Typography component="span" style={{ color: 'red' }}>
+            {`It's not your turn to speak!`}
+          </Typography>
+        );
+        if (enableSound) {
+          new Audio('./fail.mp3').play();
+        }
+        setAttempt('');
+        return;
+      }
+
+      // User correctly pressed enter without typing - show their line and advance
+      const theirLine = getLineContent(currentLine);
+      setDifference(
+        <Typography component="span" style={{ color: 'blue', fontStyle: 'italic' }}>
+          Them: {theirLine}
+        </Typography>
+      );
+      setCorrectness(100);
+      setGif(happyGif);
+      setSuccess(true);
+      setScriptLineNumber(scriptLineNumber + 1);
+
+      if (firstAttempts.split('\n').length - 1 == scriptLineNumber) {
+        setFirstAttempts(firstAttempts + '\n');
+      }
+
+      if (enableSound) {
+        new Audio('./ok.mp3').play();
+      }
     }
+  };
+
+  const handleNormalKeyPress = () => {
+    if (firstAttempts.split('\n').length - 1 == scriptLineNumber) {
+      setFirstAttempts(firstAttempts + attempt + '\n');
+    }
+    const expected = script.split('\n')[scriptLineNumber];
+
+    const diffObj = Diff.diffWords(
+      applyLineSettings(attempt, checkCase, checkPunctuation),
+      applyLineSettings(expected, checkCase, checkPunctuation)
+    );
+    const diffFound = <Typography component="span">{diffObj.map(getStyledPart)}</Typography>;
+    setDifference(diffFound);
+    const levenshteinCorrectness = calculateLevenshteinCorrectness(attempt, expected, checkCase, checkPunctuation);
+    setCorrectness(levenshteinCorrectness);
+    let sound = './ok.mp3';
+    if (levenshteinCorrectness >= minimumCorrectness) {
+      setGif(happyGif);
+      setSuccess(true);
+      setScriptLineNumber(scriptLineNumber + 1);
+    } else {
+      setGif(sadGif);
+      setSuccess(false);
+      sound = './fail.mp3';
+    }
+    if (enableSound) {
+      new Audio(sound).play();
+    }
+    setAttempt('');
   };
 
   const isFinished = () => {
@@ -259,6 +409,21 @@ const TextBoxWithButton: React.FC = () => {
                 sx={{ marginTop: 2 }}
               />
             </Box>
+            {isDialogueMode && (
+              <Typography
+                align="center"
+                sx={{
+                  marginTop: 2,
+                  padding: 1,
+                  backgroundColor: '#e3f2fd',
+                  borderRadius: 1,
+                  color: '#1976d2',
+                  fontWeight: 'bold',
+                }}
+              >
+                {`🎭 Dialogue Mode Detected! Practice conversations with alternating "Me:" and "Them:" lines.`}
+              </Typography>
+            )}
             <Button variant="contained" onClick={handleClick} sx={{ marginTop: 2 }} disabled={!script.trim()}>
               Practice
             </Button>
