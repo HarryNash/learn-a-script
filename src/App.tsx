@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   TextField,
@@ -73,6 +73,7 @@ const TextBoxWithButton: React.FC = () => {
   const [checkCase, setCheckCase] = useState(true);
   const [checkPunctuation, setCheckPunctuation] = useState(true);
   const [minimumCorrectness, setMinimumCorrectness] = useState(95);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Function to detect if script is in dialogue format
   const detectDialogueMode = (scriptText: string) => {
@@ -117,6 +118,15 @@ const TextBoxWithButton: React.FC = () => {
       document.removeEventListener('keydown', handleGlobalKeyPress);
     };
   }, [showNewTextBox, script, scriptLineNumber]); // Dependencies to ensure we have current state
+
+  // Auto-focus input field when practicing and when advancing to next line
+  useEffect(() => {
+    if (showNewTextBox && !isFinished()) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    }
+  }, [showNewTextBox, scriptLineNumber]);
 
   // Function to check if current line is "My" turn
   const isMyTurn = (lineNumber: number) => {
@@ -170,6 +180,11 @@ const TextBoxWithButton: React.FC = () => {
 
     // Set dialogue mode based on current script
     setIsDialogueMode(detectDialogueMode(script));
+
+    // Focus the input field after a short delay to ensure it's rendered
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
   };
 
   const handleEnableSound = () => {
@@ -503,6 +518,7 @@ const TextBoxWithButton: React.FC = () => {
                   autocomplete: 'off',
                 },
               }}
+              inputRef={inputRef}
               variant="outlined"
               value={attempt}
               onChange={handleAttemptChange}
