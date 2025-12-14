@@ -151,6 +151,18 @@ const TextBoxWithButton: React.FC = () => {
     setIsDialogueMode(detectDialogueMode(newScript));
   };
 
+  const handleTryMonologueMode = () => {
+    const monologueScript = [
+      'Humpty Dumpty sat on a wall.',
+      'Humpty Dumpty had a great fall.',
+      "All the king's horses and all the king's men.",
+      "Couldn't put Humpty together again.",
+    ].join('\n');
+    setScript(monologueScript);
+    localStorage.setItem('script', monologueScript);
+    setIsDialogueMode(detectDialogueMode(monologueScript));
+  };
+
   const handleTryDialogueMode = () => {
     const dialogueScript = [
       'Me: Knock knock.',
@@ -465,6 +477,9 @@ const TextBoxWithButton: React.FC = () => {
               />
               <Typography sx={{ marginLeft: 1 }}>Correctness to Pass</Typography>
             </Box>
+            <Button variant="outlined" onClick={handleTryMonologueMode} sx={{ marginTop: 2 }}>
+              Try monologue mode
+            </Button>
             <Button variant="outlined" onClick={handleTryDialogueMode} sx={{ marginTop: 2 }}>
               Try dialogue mode
             </Button>
