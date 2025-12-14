@@ -141,6 +141,20 @@ const TextBoxWithButton: React.FC = () => {
     setIsDialogueMode(detectDialogueMode(newScript));
   };
 
+  const handleTryDialogueMode = () => {
+    const dialogueScript = [
+      'Me: Knock knock.',
+      "Them: Who's there?",
+      'Me: Lettuce.',
+      'Them: Lettuce who?',
+      'Me: Lettuce in!',
+      "Me: It's cold out here!",
+    ].join('\n');
+    setScript(dialogueScript);
+    localStorage.setItem('script', dialogueScript);
+    setIsDialogueMode(detectDialogueMode(dialogueScript));
+  };
+
   const handleAttemptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAttempt(event.target.value);
   };
@@ -436,6 +450,9 @@ const TextBoxWithButton: React.FC = () => {
               />
               <Typography sx={{ marginLeft: 1 }}>Correctness to Pass</Typography>
             </Box>
+            <Button variant="outlined" onClick={handleTryDialogueMode} sx={{ marginTop: 2 }}>
+              Try dialogue mode
+            </Button>
             <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" width="90%">
               <TextField
                 label="Script"
@@ -460,7 +477,7 @@ const TextBoxWithButton: React.FC = () => {
                   fontWeight: 'bold',
                 }}
               >
-                {`🎭 Dialogue Mode Detected! Practice conversations with alternating "Me:" and "Them:" lines.`}
+                {`🎭 Dialogue Mode Detected! Practice conversations with "Me: " and "Them: " lines.`}
               </Typography>
             )}
             <Button variant="contained" onClick={handleClick} sx={{ marginTop: 2 }} disabled={!script.trim()}>
