@@ -210,7 +210,46 @@ const TextBoxWithButton: React.FC = () => {
     setDifference(<div></div>);
     setEndTime(Date.now());
     setGif('');
-    const correctness = calculateLevenshteinCorrectness(firstAttempts, script, checkCase, checkPunctuation);
+
+    let scriptToCompare = script;
+    let firstAttemptsToCompare = firstAttempts;
+
+    if (isDialogueMode) {
+      // In dialogue mode, extract only the "Me: " lines (without prefix) for comparison
+      const scriptLines = script.split('\n');
+      let attemptLines = firstAttempts.split('\n');
+      // Remove trailing empty string if firstAttempts ends with '\n'
+      if (attemptLines.length > 0 && attemptLines[attemptLines.length - 1] === '') {
+        attemptLines = attemptLines.slice(0, -1);
+      }
+
+      const myLines: string[] = [];
+      const myAttempts: string[] = [];
+
+      // Match up script lines with attempt lines by index
+      const maxLines = Math.max(scriptLines.length, attemptLines.length);
+      for (let i = 0; i < maxLines; i++) {
+        if (i < scriptLines.length && isMyTurn(i)) {
+          myLines.push(getLineContent(scriptLines[i]));
+          // Get the corresponding attempt line if it exists
+          if (i < attemptLines.length) {
+            myAttempts.push(attemptLines[i]);
+          } else {
+            myAttempts.push(''); // Missing attempt
+          }
+        }
+      }
+
+      scriptToCompare = myLines.join('\n');
+      firstAttemptsToCompare = myAttempts.join('\n');
+    }
+
+    const correctness = calculateLevenshteinCorrectness(
+      firstAttemptsToCompare,
+      scriptToCompare,
+      checkCase,
+      checkPunctuation
+    );
     setFirstPassAccuracy(correctness);
   };
 
