@@ -2,7 +2,7 @@
 
 ## Website
 
-https://learnascript.harrynash.org
+https://learnascript.harrynash.co.uk
 
 ## Preview
 
